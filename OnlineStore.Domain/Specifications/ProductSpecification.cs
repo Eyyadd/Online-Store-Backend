@@ -17,10 +17,18 @@ namespace OnlineStore.Domain.Specifications
         public ProductSpecification(Expression<Func<Product , bool>> expression)
         {
             this.Filter = expression;
-            Includes.Add(p => p.SubCategory);
         }
 
+        public ProductSpecification(Expression<Func<Product, bool>> expression , List<Expression<Func<Product , Object>>> Includes)
+        {
+            this.Filter = expression;
+            this.Includes = Includes;
+        }
 
+        public ProductSpecification(List<Expression<Func<Product, Object>>> Includes)
+        {
+            this.Includes = Includes;
+        }
 
 
 

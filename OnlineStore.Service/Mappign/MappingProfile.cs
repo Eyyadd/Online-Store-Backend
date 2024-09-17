@@ -14,7 +14,7 @@ namespace OnlineStore.Application.Mappign
             CreateMap<User, LoginUserDTO>();
             CreateMap<Category, CategoriesDTO>().ReverseMap();
             CreateMap<IdentityRole, RolteDTO>().ReverseMap();
-            //CreateMap<Discount, DiscountDTO>().ReverseMap();
+            CreateMap<Discount, DiscountDTO>().ReverseMap();
             CreateMap<Product, ProductElementDTO>()
                 .ForMember(DTO => DTO.InStocke , OPT => OPT.MapFrom(src => src.ProductVariants.Where(v => v.Quantity > 0).Count() >0))
                 .ForMember(DTO => DTO.CategoryName , opt => opt.MapFrom(src => src.SubCategory.Name))

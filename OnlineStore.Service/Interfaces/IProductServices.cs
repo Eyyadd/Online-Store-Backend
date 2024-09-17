@@ -14,7 +14,7 @@ namespace OnlineStore.Application.Interfaces
         public IEnumerable<ProductVariants> AllProductsVariants();
         public ProductDetailsDTO ProductDetails(int id);
 
-        public IEnumerable<Product> ProductsByCategoryId(int CategoryID);
+        public IEnumerable<ProductElementDTO> ProductsByCategoryId(int CategoryID);
 
         public IEnumerable<Product> BestSellerProducts();
 

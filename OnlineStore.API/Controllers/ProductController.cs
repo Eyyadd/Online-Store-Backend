@@ -44,22 +44,6 @@ namespace OnlineStore.API.Controllers
         }
 
 
-        [HttpGet("Var")]
-        public ActionResult<GeneralResponse<List<ProductVariants>>> Allvar()
-        {
-            try
-            {
-                var productVariants = _productServices.AllProductsVariants().ToList();
-                var response = new GeneralResponse<List<ProductVariants>>(true, "Product variants retrieved successfully", productVariants);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                var errorResponse = new GeneralResponse<List<ProductVariants>>(false, $"Error retrieving product variants: {ex.Message}");
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
-            }
-        }
-
         [HttpGet("{id}")]
         public ActionResult<GeneralResponse<ProductDetailsDTO>> ProductById(int id)
         {
@@ -80,6 +64,21 @@ namespace OnlineStore.API.Controllers
                 var errorResponse = new GeneralResponse<ProductDetailsDTO>(false, $"Error retrieving product details: {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
             }
+        }
+
+        [HttpGet("Category/{categoryId}")]
+        public ActionResult<GeneralResponse<IEnumerable<ProductElementDTO>>> ProudctByCategory(int categoryId)
+        {
+            GeneralResponse<IEnumerable<ProductElementDTO>> response = new GeneralResponse<IEnumerable<ProductElementDTO>>(false, "Invalid Category ID!");
+            var Result = _productServices.ProductsByCategoryId(categoryId);
+            if (Result is not null)
+            {
+                response.Success = true;
+                response.Message = "Products Retrives Successfully";
+                response.Data = Result;
+                return response;
+            }
+            return response;
         }
     }
 }

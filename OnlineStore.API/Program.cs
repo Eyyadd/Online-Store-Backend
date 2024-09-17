@@ -5,6 +5,7 @@ using OnlineStore.Application.Mappign;
 using OnlineStore.Application.Services;
 using OnlineStore.Domain.ServicesInterfaces;
 using OnlineStore.Infrastructure.MailSendServices;
+using System.Text.Json.Serialization;
 
 
 namespace OnlineStore.API
@@ -22,7 +23,10 @@ namespace OnlineStore.API
             builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
-            });
+            }).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            }); ;
 
             builder.Services.AddAuthentication(options =>
             {
