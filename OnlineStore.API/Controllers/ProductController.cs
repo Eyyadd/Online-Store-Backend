@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineStore.Application.DTOs.Products;
 using OnlineStore.Application.Interfaces;
+using OnlineStore.Application.Services;
 using OnlineStore.Service.Helper;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,13 @@ namespace OnlineStore.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductServices _productServices;
+        private readonly IFilterService _filterService;
 
-        public ProductController(IProductServices productServices)
+        public ProductController(IProductServices productServices,
+            IFilterService filterService)
         {
             _productServices = productServices;
+            _filterService = filterService;
         }
 
         [HttpGet]
@@ -82,4 +86,6 @@ namespace OnlineStore.API.Controllers
             }
         }
     }
+
+    
 }
