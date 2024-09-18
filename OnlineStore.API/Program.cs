@@ -5,6 +5,7 @@ using OnlineStore.Application.Mappign;
 using OnlineStore.Application.Services;
 using OnlineStore.Domain.ServicesInterfaces;
 using OnlineStore.Infrastructure.MailSendServices;
+using OnlineStore.Infrastructure.Services;
 
 
 namespace OnlineStore.API
@@ -16,6 +17,8 @@ namespace OnlineStore.API
             var builder = WebApplication.CreateBuilder(args);
 
             RegisterServices.AddRegisterServices(builder.Services);
+
+            builder.Services.AddScoped<IWishlistService, WishlistService>();   
 
             //  builder.Services.AddAuthorization();
             //Config ModelState Configuration

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using MimeKit;
 using OnlineStore.Domain.Utilities;
+using OnlineStore.Infrastructure.DTOs;
 using OnlineStore.Service.Helper;
 using System.Web;
 
@@ -133,6 +135,37 @@ namespace OnlineStore.API.Controllers
             return Unauthorized(new GeneralResponse<string>(false,"User Not Found",loginUserDTO.UserName));
         }
 
-        
+        [HttpPost("UpdatePassword")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> UpdatePassword(UpdatePasswordDTO updatePasswordDTO)
+        {
+            var user = await _UserManager.FindByNameAsync(updatePasswordDTO.UserName);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var passwordValid = await _UserManager.CheckPasswordAsync(user, updatePasswordDTO.CurrentPassword);
+            if (!passwordValid)
+            {
+                return BadRequest("Current password is incorrect.");
+            }
+
+            var changePasswordResult = await _UserManager.ChangePasswordAsync(user, updatePasswordDTO.CurrentPassword, updatePasswordDTO.NewPassword);
+
+            if (changePasswordResult.Succeeded)
+            {
+                return Ok("Password updated successfully.");
+            }
+
+            foreach (var error in changePasswordResult.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+
     }
 }

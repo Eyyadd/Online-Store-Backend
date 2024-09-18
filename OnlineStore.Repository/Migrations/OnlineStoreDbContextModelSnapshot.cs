@@ -487,7 +487,7 @@ namespace OnlineStore.Repository.Migrations
                     b.Property<decimal>("PrecentageOfSales")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("decimal(18,2)")
-                        .HasComputedColumnSql("((CAST[TotalQuantity]-[Quantity] AS DECIMAL)/[TotalQuantity])*100");
+                        .HasComputedColumnSql("((CAST([TotalQuantity] - [Quantity] AS DECIMAL) / [TotalQuantity]) * 100)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -508,6 +508,29 @@ namespace OnlineStore.Repository.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductVariants");
+                });
+
+            modelBuilder.Entity("OnlineStore.Domain.Entities.ProductWishlist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("wishlistId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("wishlistId");
+
+                    b.ToTable("ProductWishlist");
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.Review", b =>
@@ -755,6 +778,25 @@ namespace OnlineStore.Repository.Migrations
                     b.Navigation("CartItems");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("OnlineStore.Domain.Entities.ProductWishlist", b =>
+                {
+                    b.HasOne("OnlineStore.Domain.Entities.ProductVariants", "product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineStore.Domain.Entities.Wishlist", "Wishlist")
+                        .WithMany()
+                        .HasForeignKey("wishlistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Wishlist");
+
+                    b.Navigation("product");
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.Review", b =>
