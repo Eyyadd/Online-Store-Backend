@@ -32,14 +32,16 @@ namespace OnlineStore.Application.Services
         }
 
 
-        public IEnumerable<ProductVariants> AllProductsVariants()
+        public IEnumerable<ProductVariantDTO> AllProductsVariants()
         {
-            throw new NotImplementedException();
+            var ProudctVariants = _unitOfWork.Repository<ProductVariants>().GetAll();
+            var Result = _mapper.Map<IEnumerable<ProductVariantDTO>>(ProudctVariants);
+            return Result;
         }
 
-        public IEnumerable<Product> BestSellerProducts()
+        public IEnumerable<ProductElementDTO> BestSellerProducts()
         {
-            throw new NotImplementedException();
+            var ProudctOrdered = _unitOfWork.Repository<ProductVariants>().GetTop<decimal>(p => p.PrecentageOfSales , 5);
         }
 
         public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO , string ImagePath)

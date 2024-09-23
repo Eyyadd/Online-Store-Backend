@@ -6,6 +6,7 @@ namespace OnlineStore.Domain.Interfaces
     public interface IRepository<T> where T : BaseEntity
     {
         IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(Func<T , bool> Predicate);
         IEnumerable<T> GetAllWithSpec(ISpecifications<T> specifications);
         T GetById(int id);
         T GetByIdWithSpec(int id , ISpecifications<T> specifications);
@@ -16,7 +17,7 @@ namespace OnlineStore.Domain.Interfaces
         void Update(T entity);
         void Delete(int id);
         public Task<int> Delete(string SqlQuery, int CartId);
-
+        public IEnumerable<T> GetTop<TKey>(Func<T, TKey> Selector, int Size);
 
     }
 }

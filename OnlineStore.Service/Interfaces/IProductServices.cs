@@ -13,7 +13,7 @@ namespace OnlineStore.Application.Interfaces
 
         public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO , string ImagePath);
 
-        public IEnumerable<ProductVariants> AllProductsVariants();
+        public IEnumerable<ProductVariantDTO> AllProductsVariants();
         public ProductDetailsDTO ProductDetails(int id);
 
         public IEnumerable<ProductElementDTO> ProductsByCategoryId(int CategoryID);

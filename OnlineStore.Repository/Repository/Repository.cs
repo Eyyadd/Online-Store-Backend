@@ -8,7 +8,7 @@ namespace OnlineStore.Application.Repository
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         private OnlineStoreDbContext _context;
-        
+
         public Repository(OnlineStoreDbContext context)
         {
             _context = context;
@@ -20,10 +20,10 @@ namespace OnlineStore.Application.Repository
 
         public void Delete(int id)
         {
-            var OldEntity=GetById(id);
+            var OldEntity = GetById(id);
             _context.Remove(OldEntity);
-            
-            
+
+
         }
 
         public async Task<int> Delete(string SqlQuery, int CartId)
@@ -75,10 +75,10 @@ namespace OnlineStore.Application.Repository
             _context.Update(entity);
         }
 
-        public IEnumerable<TResult> SelectItems <TResult>(Func <T , TResult> func , string? includes , Func<T, bool> condition)
+        public IEnumerable<TResult> SelectItems<TResult>(Func<T, TResult> func, string? includes, Func<T, bool> condition)
         {
-            if(includes is not null)
-                  return _context.Set<T>().Include(includes).Where(condition).Select(func);
+            if (includes is not null)
+                return _context.Set<T>().Include(includes).Where(condition).Select(func);
             else
                 return _context.Set<T>().Where(condition).Select(func);
         }
@@ -87,5 +87,16 @@ namespace OnlineStore.Application.Repository
         {
             return _context.Set<T>().Include(Inclue).ThenInclude(ThenInclude);
         }
+
+        public IEnumerable<T> GetAll(Func<T, bool> Predicate)
+        {
+            return _context.Set<T>().AsNoTracking().Where(Predicate);
+        }
+
+        public IEnumerable<T> GetTop<TKey>(Func<T, TKey> Selector , int Size)
+        {
+            return _context.Set<T>().AsNoTracking().OrderByDescending(Selector).Take(Size);
+        }
+
     }
 }
