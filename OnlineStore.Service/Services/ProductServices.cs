@@ -42,6 +42,15 @@ namespace OnlineStore.Application.Services
             throw new NotImplementedException();
         }
 
+        public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO , string ImagePath)
+        {
+            var Proudct = _mapper.Map<Product>(createProductDTO);
+            Proudct.ImageCover = ImagePath;
+            _unitOfWork.Repository<Product>().Add(Proudct);
+            _unitOfWork.Commit();
+            return _mapper.Map<ProductElementDTO>(Proudct);
+        }
+
         public IEnumerable<Product> NewArraivelProducts()
         {
             throw new NotImplementedException();
@@ -85,6 +94,11 @@ namespace OnlineStore.Application.Services
             var Products = _unitOfWork.Repository<Product>().GetAllWithSpec(new ProductSpecification(p => p.SubCategoryId == CategoryID , Includes));
             var ProductsDTO = new List<ProductElementDTO>();
             return _mapper.Map(Products, ProductsDTO);
+        }
+
+        public IEnumerable<string> ProuctsSaller()
+        {
+            return _unitOfWork.Repository<Product>().GetAll().Select(p => p.Seller);
         }
 
         public IEnumerable<Product> SaleProducts()

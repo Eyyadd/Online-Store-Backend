@@ -2,9 +2,12 @@ using Microsoft.OpenApi.Models;
 using OnlineStore.Application.Interfaces;
 using OnlineStore.Application.MailSendServices;
 using OnlineStore.Application.Mappign;
+using OnlineStore.Application.Repository;
 using OnlineStore.Application.Services;
+using OnlineStore.Domain.Interfaces;
 using OnlineStore.Domain.ServicesInterfaces;
 using OnlineStore.Infrastructure.MailSendServices;
+using OnlineStore.Infrastructure.Services;
 using System.Text.Json.Serialization;
 
 
@@ -17,6 +20,11 @@ namespace OnlineStore.API
             var builder = WebApplication.CreateBuilder(args);
 
             RegisterServices.AddRegisterServices(builder.Services);
+
+            builder.Services.AddScoped<IWishlistService, WishlistService>();
+            builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
+            builder.Services.AddScoped<IFilterService, FilterService>();
+
 
             //  builder.Services.AddAuthorization();
             //Config ModelState Configuration
@@ -135,7 +143,7 @@ namespace OnlineStore.API
             //app.UseRouting();
           //  app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseStaticFiles();
 
             app.MapControllers();
 

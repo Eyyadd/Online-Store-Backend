@@ -21,4 +21,8 @@
     <ProjectReference Include="..\OnlineStore.Service\OnlineStore.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
 </Project>

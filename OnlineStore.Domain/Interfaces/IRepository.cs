@@ -1,4 +1,5 @@
 ﻿using OnlineStore.Domain.Specifications;
+using System.Linq.Expressions;
 
 namespace OnlineStore.Domain.Interfaces
 {
@@ -8,10 +9,13 @@ namespace OnlineStore.Domain.Interfaces
         IEnumerable<T> GetAllWithSpec(ISpecifications<T> specifications);
         T GetById(int id);
         T GetByIdWithSpec(int id , ISpecifications<T> specifications);
+        T GetByIdWithSpec(string id, ISpecifications<T> specifications);
         IEnumerable<TResult> SelectItems<TResult>(Func<T, TResult> func , string? includes , Func<T, bool> Condition) ;
+        IEnumerable<T> ThenInclude<TFirst , TSecond>(Expression<Func<TFirst, TSecond>> ThenInclude, Expression<Func<T, TFirst>> Inclue);
         void Add(T entity);
         void Update(T entity);
         void Delete(int id);
+        public Task<int> Delete(string SqlQuery, int CartId);
 
 
     }

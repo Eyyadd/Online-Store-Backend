@@ -8,6 +8,8 @@ namespace OnlineStore.Domain.Utilities.Enums
 {
     public enum CategoryType
     {
-        Men,Women,Children
+        Men,
+        Women,
+        Children
     }
 }

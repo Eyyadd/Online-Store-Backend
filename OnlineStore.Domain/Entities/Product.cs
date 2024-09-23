@@ -22,6 +22,8 @@
 
         public ICollection<ProductVariants>? ProductVariants { get; set; }
 
-  
+        public string? ImageCover { get; set; }
+
+
     }
 }

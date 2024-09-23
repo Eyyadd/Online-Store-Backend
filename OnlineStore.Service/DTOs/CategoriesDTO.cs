@@ -12,7 +12,9 @@ namespace OnlineStore.Application.DTOs
     {
         [MaxLength(40)]
         [MinLength(2)]
+
         public string Name { get; set; }
+        public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
         [Range(0, 2)]
         public CategoryType CategoryType { get; set; }

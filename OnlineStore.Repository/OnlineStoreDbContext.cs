@@ -23,6 +23,7 @@ namespace OnlineStore.Application
         public DbSet<Order> Order { get; set; }
         public DbSet<Product> Products { get; set; }    
         public DbSet<ProductVariants> ProductVariants { get; set; }
+        public DbSet<ProductWishlist> ProductWishlist { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Category> SubCategories { get; set; }
         public DbSet<Wishlist> Wishlist { get; set; }

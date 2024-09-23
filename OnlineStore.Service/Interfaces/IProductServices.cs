@@ -11,6 +11,8 @@ namespace OnlineStore.Application.Interfaces
     {
         public IEnumerable<ProductElementDTO> AllProducts();
 
+        public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO , string ImagePath);
+
         public IEnumerable<ProductVariants> AllProductsVariants();
         public ProductDetailsDTO ProductDetails(int id);
 
@@ -22,5 +24,8 @@ namespace OnlineStore.Application.Interfaces
         public IEnumerable<Product> NewArraivelProducts();
 
         public IEnumerable<Product> SaleProducts();
+
+        public IEnumerable<string> ProuctsSaller();
+       
     }
 }

@@ -6,6 +6,7 @@ using OnlineStore.Service.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace OnlineStore.API.Controllers
 {
@@ -80,5 +81,33 @@ namespace OnlineStore.API.Controllers
             }
             return response;
         }
+
+        [HttpGet("Seller")]
+        public GeneralResponse<IEnumerable<string>> Seller()
+        {
+          var Result =  _productServices.ProuctsSaller();
+            return new GeneralResponse<IEnumerable<string>>(true, "", Result);
+        }
+
+        [HttpPost("Create")]
+        public async Task<GeneralResponse<ProductElementDTO>> Add(CreateProductDTO createProductDTO )
+        {
+            var ImageName = $"{Guid.NewGuid()}{Path.GetExtension(createProductDTO.ImageCover.FileName)}";
+            var FolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images");
+            if (!Directory.Exists(FolderPath))
+            {
+                Directory.CreateDirectory(FolderPath);
+            }
+            var ImageRealPath = Path.Combine(FolderPath, ImageName);
+            using (var stream = new FileStream(ImageRealPath, FileMode.Create))
+            {
+                await createProductDTO.ImageCover.CopyToAsync(stream);
+            }
+            var ImagePathToRestor = $"Images/{ImageName}";
+            var Result =  _productServices.CreateProduct(createProductDTO , ImagePathToRestor);
+            return new GeneralResponse<ProductElementDTO>(true, "", Result);
+
+        }
+
     }
 }

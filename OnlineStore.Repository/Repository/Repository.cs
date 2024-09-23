@@ -1,5 +1,7 @@
-﻿using OnlineStore.Domain.Specifications;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineStore.Domain.Specifications;
 using OnlineStore.Infrastrucutre;
+using System.Linq.Expressions;
 
 namespace OnlineStore.Application.Repository
 {
@@ -20,6 +22,14 @@ namespace OnlineStore.Application.Repository
         {
             var OldEntity=GetById(id);
             _context.Remove(OldEntity);
+            
+            
+        }
+
+        public async Task<int> Delete(string SqlQuery, int CartId)
+        {
+            var RowEffected = await _context.Database.ExecuteSqlRawAsync(SqlQuery, CartId);
+            return RowEffected;
         }
 
         public IEnumerable<T> GetAll()
@@ -27,10 +37,13 @@ namespace OnlineStore.Application.Repository
             return _context.Set<T>().AsNoTracking().ToList();
         }
 
+
         public IEnumerable<T> GetAllIncluded(string IncludedMember)
         {
             return _context.Set<T>().Include(IncludedMember).AsNoTracking().ToList();
         }
+
+
 
         public IEnumerable<T> GetAllWithSpec(ISpecifications<T> specifications)
         {
@@ -42,7 +55,12 @@ namespace OnlineStore.Application.Repository
             return _context.Set<T>().Find(id)!;
         }
 
+
         public T GetByIdWithSpec(int id, ISpecifications<T> specifications)
+        {
+            return ApplySpecifications(specifications).FirstOrDefault();
+        }
+        public T GetByIdWithSpec(string id, ISpecifications<T> specifications)
         {
             return ApplySpecifications(specifications).FirstOrDefault();
         }
@@ -63,6 +81,11 @@ namespace OnlineStore.Application.Repository
                   return _context.Set<T>().Include(includes).Where(condition).Select(func);
             else
                 return _context.Set<T>().Where(condition).Select(func);
+        }
+
+        public IEnumerable<T> ThenInclude<TFirst, TSecond>(Expression<Func<TFirst, TSecond>> ThenInclude, Expression<Func<T, TFirst>> Inclue)
+        {
+            return _context.Set<T>().Include(Inclue).ThenInclude(ThenInclude);
         }
     }
 }

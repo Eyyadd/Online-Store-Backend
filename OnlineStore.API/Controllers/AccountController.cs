@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MimeKit;
+using OnlineStore.Application.Interfaces;
+using OnlineStore.Application.Services;
 using OnlineStore.Domain.Utilities;
 using OnlineStore.Service.Helper;
 using System.Web;
@@ -14,15 +17,21 @@ namespace OnlineStore.API.Controllers
         private readonly IConfiguration _Configuration;
         private readonly IMapper _Mapper;
         private readonly ISendEmail sendEmailService;
+        private readonly ICartServices _cartServices;
+        private readonly IUserService _userService;
 
         public AccountController(UserManager<User> userManager
             ,IConfiguration configuration, IMapper mapper
-            ,ISendEmail sendEmailService)
+            ,ISendEmail sendEmailService
+            ,ICartServices cartServices
+            ,IUserService userService)
         {
             _UserManager = userManager;
             _Configuration = configuration;
             _Mapper = mapper;
             this.sendEmailService = sendEmailService;
+            _cartServices = cartServices;
+            _userService = userService;
         }
 
         [HttpPost("Register")]
@@ -47,6 +56,9 @@ namespace OnlineStore.API.Controllers
             var Result = await _UserManager.CreateAsync(User, user.Password);
             if(Result.Succeeded)
             {
+                Cart cart =_cartServices.CreateCart(User);
+                User.CartId = cart.Id;
+                _UserManager.UpdateAsync(User);
                 Response.Success = true;
                 Response.Data = "Check Email For Confirmation";
                 Response.Message = null;

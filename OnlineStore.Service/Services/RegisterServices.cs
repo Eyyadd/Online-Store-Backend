@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using OnlineStore.Application.Interfaces;
 using OnlineStore.Application.Services;
 using System;
@@ -19,6 +20,8 @@ namespace OnlineStore.Service.Services
             service.AddScoped<ICategoryServices, CategoryServices>();
             service.AddScoped<IOwnerService, OwnerService>();
             service.AddScoped<IDiscountService, DiscountService>();
+            service.AddScoped<ICartServices, CartServices>();
+            
         }
     }
 }

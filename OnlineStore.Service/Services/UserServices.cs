@@ -1,4 +1,5 @@
-﻿using OnlineStore.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using OnlineStore.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,13 @@ namespace OnlineStore.Application.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserServices(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public UserServices(UserManager<User> userManager, RoleManager<IdentityRole> roleManager , IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _unitOfWork = unitOfWork;
         }
 
         public User GetUserByEmail(string email)
@@ -36,6 +39,11 @@ namespace OnlineStore.Application.Services
                 _userManager.AddToRoleAsync(user, roleName).Wait();
             }
         }
+
+    
+
+      
+
 
         //public void AssignRoleToUser(int userId, int roleId)
         //{
