@@ -7,8 +7,6 @@ using OnlineStore.Application.Services;
 using OnlineStore.Domain.Interfaces;
 using OnlineStore.Domain.ServicesInterfaces;
 using OnlineStore.Infrastructure.MailSendServices;
-using OnlineStore.Infrastructure.Services;
-using System.Text.Json.Serialization;
 
 
 namespace OnlineStore.API
@@ -20,11 +18,6 @@ namespace OnlineStore.API
             var builder = WebApplication.CreateBuilder(args);
 
             RegisterServices.AddRegisterServices(builder.Services);
-
-            builder.Services.AddScoped<IWishlistService, WishlistService>();
-            builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
-            builder.Services.AddScoped<IFilterService, FilterService>();
-
 
             //  builder.Services.AddAuthorization();
             //Config ModelState Configuration
