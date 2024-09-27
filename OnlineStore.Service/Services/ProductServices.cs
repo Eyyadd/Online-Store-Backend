@@ -6,6 +6,7 @@ using OnlineStore.Domain.Specifications;
 using OnlineStore.Domain.Utilities.Enums;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -26,11 +27,9 @@ namespace OnlineStore.Application.Services
 
         public IEnumerable<ProductElementDTO> AllProducts()
         {
-            var Products = _unitOfWork.Repository<Product>().GetAllWithSpec(new ProductSpecification());
-            var ProductsDto = new List<ProductElementDTO>();
-            return _mapper.Map(Products , ProductsDto);
+            var Products = _unitOfWork.ProductRepository().All();
+            return _mapper.Map<IEnumerable<ProductElementDTO>>(Products);
         }
-
 
         public IEnumerable<ProductVariantDTO> AllProductsVariants()
         {
@@ -39,9 +38,10 @@ namespace OnlineStore.Application.Services
             return Result;
         }
 
-        public IEnumerable<ProductElementDTO> BestSellerProducts()
+        public IEnumerable<ProductElementDTO> BestSellerProducts(int size)
         {
-            var ProudctOrdered = _unitOfWork.Repository<ProductVariants>().GetTop<decimal>(p => p.PrecentageOfSales , 5);
+            var Products = _unitOfWork.ProductRepository().BestSeller(size);
+            return _mapper.Map<IEnumerable<ProductElementDTO>>(Products);
         }
 
         public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO , string ImagePath)
@@ -53,28 +53,28 @@ namespace OnlineStore.Application.Services
             return _mapper.Map<ProductElementDTO>(Proudct);
         }
 
-        public IEnumerable<Product> NewArraivelProducts()
+        public IEnumerable<ProductElementDTO> NewArraivelProducts(int size)
         {
-            throw new NotImplementedException();
+           var Products = _unitOfWork.ProductRepository().NewArrival(size).ToList();
+            return _mapper.Map<IEnumerable<ProductElementDTO>>(Products);
+            
         }
 
         public ProductDetailsDTO ProductDetails(int id)
         {
-            List<Expression<Func<Product, Object>>> Includes = new List<Expression<Func<Product, object>>>();
-            Includes.Add(p => p.SubCategory);
-            var product = _unitOfWork.Repository<Product>().GetByIdWithSpec(id,new ProductSpecification(p=>p.Id == id , Includes));
+            var product = _unitOfWork.ProductRepository().ProductDetails(id);
             var ProductInfo = new
             {
                 product.Id, product.Name, product.Price, product.Seller, CategoryName = product.SubCategory.Name
             };
-            var variants = _unitOfWork.Repository<ProductVariants>().SelectItems(v => new ProductVariantDTO
+            var variants = product.ProductVariants.Select(v => new ProductVariantDTO
             {
                 Id = v.Id,
                 Color = v.Color,
                 Image = v.Image,
                 Quantity = v.Quantity,
                 Size = v.Size
-            }, null, v => v.ProductId == id).OrderBy(v => v.Color);
+            }).OrderBy(v => v.Color);
 
             ProductDetailsDTO productDetailsDTO = new ProductDetailsDTO
             {
@@ -90,12 +90,8 @@ namespace OnlineStore.Application.Services
 
         public IEnumerable<ProductElementDTO> ProductsByCategoryId(int CategoryID)
         {
-            List<Expression<Func<Product, Object>>> Includes = new List<Expression<Func<Product, object>>>();
-            Includes.Add(p => p.SubCategory);
-            Includes.Add(p => p.ProductVariants);
-            var Products = _unitOfWork.Repository<Product>().GetAllWithSpec(new ProductSpecification(p => p.SubCategoryId == CategoryID , Includes));
-            var ProductsDTO = new List<ProductElementDTO>();
-            return _mapper.Map(Products, ProductsDTO);
+            var Prodcuts = _unitOfWork.ProductRepository().GetByCategoryID(CategoryID);
+            return _mapper.Map<IEnumerable<ProductElementDTO>>(Prodcuts);
         }
 
         public IEnumerable<string> ProuctsSaller()
@@ -103,14 +99,15 @@ namespace OnlineStore.Application.Services
             return _unitOfWork.Repository<Product>().GetAll().Select(p => p.Seller);
         }
 
-        public IEnumerable<Product> SaleProducts()
+        public IEnumerable<ProductElementDTO> SaleProducts()
         {
-            throw new NotImplementedException();
+            var Products = _unitOfWork.ProductRepository().ProductHaveSale();
+            return _mapper.Map<IEnumerable<ProductElementDTO>> (Products);
+
         }
 
-        public IEnumerable<Product> TopRatedProducts()
-        {
-            throw new NotImplementedException();
-        }
+     
+
+       
     }
 }

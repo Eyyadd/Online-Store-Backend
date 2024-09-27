@@ -11,8 +11,12 @@ namespace OnlineStore.Domain.Specifications
     {
         public Expression<Func<T , bool>> Filter { get; set; }
 
-        public List<Expression<Func<T , Object>>> Includes { get; set; }
-       
+        public List<Expression<Func<T , object>>> Includes { get; set; }     
+
+        public  Expression<Func<T, object>> GroupByClause { get; set; }
+
+        public  Func<IQueryable<T>, IOrderedQueryable<T>> OrderByClause { get; set; }
+
 
 
     }

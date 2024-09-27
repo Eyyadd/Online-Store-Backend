@@ -18,12 +18,12 @@ namespace OnlineStore.Application.Interfaces
 
         public IEnumerable<ProductElementDTO> ProductsByCategoryId(int CategoryID);
 
-        public IEnumerable<Product> BestSellerProducts();
+        //public IQueryable<BestSeller> BestSellerProducts(int size);
+        public IEnumerable<ProductElementDTO> BestSellerProducts(int size);
 
-        public IEnumerable<Product> TopRatedProducts();
-        public IEnumerable<Product> NewArraivelProducts();
+        public IEnumerable<ProductElementDTO> NewArraivelProducts(int size);
 
-        public IEnumerable<Product> SaleProducts();
+        public IEnumerable<ProductElementDTO> SaleProducts();
 
         public IEnumerable<string> ProuctsSaller();
        

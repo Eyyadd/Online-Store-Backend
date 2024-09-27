@@ -42,6 +42,7 @@ namespace OnlineStore.Application.Mappign
             CreateMap<CreateProductDTO, Product>()
                 .ForMember(p => p.SubCategoryId , opt => opt.MapFrom(dto =>dto.CategoryId));
 
+           
 
 
 

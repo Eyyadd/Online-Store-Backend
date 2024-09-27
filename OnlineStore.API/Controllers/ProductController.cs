@@ -16,20 +16,20 @@ namespace OnlineStore.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductServices _productServices;
-        private readonly IFilterService _filterService;
+        //private readonly IFilterService _filterService;
 
-        public ProductController(IProductServices productServices,
-            IFilterService filterService)
+        public ProductController(IProductServices productServices
+          /*  IFilterService filterService*/)
         {
             _productServices = productServices;
-            _filterService = filterService;
+            //_filterService = filterService;
         }
 
         [HttpGet]
         public ActionResult<GeneralResponse<List<ProductElementDTO>>> All()
         {
-            try
-            {
+            //try
+            //{
                 var products = _productServices.AllProducts().ToList();
 
                 if (products == null || products.Count == 0)
@@ -40,12 +40,12 @@ namespace OnlineStore.API.Controllers
 
                 var response = new GeneralResponse<List<ProductElementDTO>>(true, "Products retrieved successfully", products);
                 return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                var errorResponse = new GeneralResponse<List<ProductElementDTO>>(false, $"Error retrieving products: {ex.Message}");
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    var errorResponse = new GeneralResponse<List<ProductElementDTO>>(false, $"Error retrieving products: {ex.Message}");
+            //    return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            //}
         }
 
 
@@ -71,7 +71,7 @@ namespace OnlineStore.API.Controllers
             }
         }
 
-        [HttpGet("Category/{categoryId}")]
+        [HttpGet("GetByCategory")]
         public ActionResult<GeneralResponse<IEnumerable<ProductElementDTO>>> ProudctByCategory(int categoryId)
         {
             GeneralResponse<IEnumerable<ProductElementDTO>> response = new GeneralResponse<IEnumerable<ProductElementDTO>>(false, "Invalid Category ID!");
@@ -112,6 +112,37 @@ namespace OnlineStore.API.Controllers
             return new GeneralResponse<ProductElementDTO>(true, "", Result);
 
         }
+
+        [HttpGet("BestSeller")]
+        //public GeneralResponse<IQueryable<BestSeller>> BestSeller(int size)
+        //{
+        //    var Result = _productServices.BestSellerProducts(size);
+        //    return new GeneralResponse<IQueryable<BestSeller>>(true, "", Result);
+
+        //}
+        public GeneralResponse<IEnumerable<ProductElementDTO>> BestSeller(int size)
+        {
+            var Result = _productServices.BestSellerProducts(size);
+            return new GeneralResponse<IEnumerable<ProductElementDTO>>(true, "", Result);
+        }
+
+
+
+        [HttpGet("NewArrival")]
+        public GeneralResponse<IEnumerable<ProductElementDTO>> NewArrival(int size)
+        {
+            var Result = _productServices.NewArraivelProducts(size);
+            return new GeneralResponse<IEnumerable<ProductElementDTO>>(true, "", Result);
+        }
+
+        [HttpGet("ProductHaveSale")]
+        public GeneralResponse<IEnumerable<ProductElementDTO>> HaveSale()
+        {
+            var Result = _productServices.SaleProducts();
+            return new GeneralResponse<IEnumerable<ProductElementDTO>>(true, "", Result);
+        }
+
+
 
     }
 

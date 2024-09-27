@@ -27,5 +27,6 @@ namespace OnlineStore.Application
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Category> SubCategories { get; set; }
         public DbSet<Wishlist> Wishlist { get; set; }
+        public DbSet<BestSeller> BestSellers { get; set; }
     }
 }

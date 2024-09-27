@@ -7,6 +7,7 @@ using OnlineStore.Application.Services;
 using OnlineStore.Domain.Interfaces;
 using OnlineStore.Domain.ServicesInterfaces;
 using OnlineStore.Infrastructure.MailSendServices;
+using System.Text.Json.Serialization;
 
 
 namespace OnlineStore.API
@@ -78,7 +79,7 @@ namespace OnlineStore.API
             builder.Services.Configure<EmailBaseConfiguration>(builder.Configuration.GetSection("MailSetting"));
             builder.Services.AddTransient<ISendEmail, EmailSender>();
 
-            builder.Services.AddScoped<IProductServices, ProductServices>();
+           
 
             #region Swagger REgion
             builder.Services.AddSwaggerGen(swagger =>
@@ -116,6 +117,7 @@ namespace OnlineStore.API
                     });
             });
             #endregion
+            //System.AggregateException: 'Some services are not able to be constructed (Error while validating the service descriptor 'ServiceType: OnlineStore.Application.Interfaces.IFilterService Lifetime: Scoped ImplementationType: OnlineStore.Application.Services.FilterService': Unable to resolve service for type 'OnlineStore.Domain.Interfaces.IRepository`1[OnlineStore.Domain.Entities.Product]' while attempting to activate 'OnlineStore.Application.Services.FilterService'.)'
 
 
             builder.Services.AddCors(options =>

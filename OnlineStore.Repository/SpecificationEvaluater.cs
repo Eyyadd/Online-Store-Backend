@@ -22,7 +22,18 @@ namespace OnlineStore.Infrastrucutre
                     .Aggregate(query, (CurrentQuery, NextQuery) => CurrentQuery.Include(NextQuery));
             }
 
-  
+            if (Spec.GroupByClause != null)
+            {
+                query = query.GroupBy(Spec.GroupByClause).SelectMany(group => group);
+            }
+
+            // Apply OrderBy
+            if (Spec.OrderByClause != null)
+            {
+                query = Spec.OrderByClause(query);
+            }
+
+
             return query;
         }
     }

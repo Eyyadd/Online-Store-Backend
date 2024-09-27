@@ -22,13 +22,11 @@ namespace OnlineStore.Application.Repository
         {
             var OldEntity = GetById(id);
             _context.Remove(OldEntity);
-
-
         }
 
-        public async Task<int> Delete(string SqlQuery, int CartId)
+        public async Task<int> Delete(string SqlQuery, int id)
         {
-            var RowEffected = await _context.Database.ExecuteSqlRawAsync(SqlQuery, CartId);
+            var RowEffected = await _context.Database.ExecuteSqlRawAsync(SqlQuery, id);
             return RowEffected;
         }
 
@@ -42,8 +40,6 @@ namespace OnlineStore.Application.Repository
         {
             return _context.Set<T>().Include(IncludedMember).AsNoTracking().ToList();
         }
-
-
 
         public IEnumerable<T> GetAllWithSpec(ISpecifications<T> specifications)
         {
@@ -93,10 +89,14 @@ namespace OnlineStore.Application.Repository
             return _context.Set<T>().AsNoTracking().Where(Predicate);
         }
 
-        public IEnumerable<T> GetTop<TKey>(Func<T, TKey> Selector , int Size)
+        public IQueryable<T> GetAll(string query, int size)
         {
-            return _context.Set<T>().AsNoTracking().OrderByDescending(Selector).Take(Size);
+            return _context.Set<T>().FromSqlRaw(query);
         }
 
+        //public IQueryable<T> DynamicQuery(Expression<Func<T, bool>>? WherwCondition, Expression<Func<IQueryable<T>, IOrderedQueryable<T>>>? Order, Expression<Func<IQueryable<T>, IQueryable<object>>>[]? Includes, Expression<Func<IQueryable<T>, IQueryable<object>>>[]? ThenIncludes)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

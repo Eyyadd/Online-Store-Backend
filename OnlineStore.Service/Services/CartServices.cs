@@ -21,27 +21,28 @@ namespace OnlineStore.Application.Services
             _mapper = mapper;
         }
 
-        public List<RetriveCartItemsDTO> AddToCart( CreateCartItemDTO cartItemsDTO , string userId)
+        public IEnumerable<RetriveCartItemsDTO> AddToCart( CreateCartItemDTO cartItemsDTO , string userId)
         {
             var Item = _mapper.Map<CartItems>(cartItemsDTO);
-            var IsExisit = _unitOfWork.Repository<CartItems>().GetByIdWithSpec(cartItemsDTO.ProductVariantId ,new BaseSpecification<CartItems>(c => c.ProductID == cartItemsDTO.ProductVariantId))
+            var IsExisit = _unitOfWork.CartRepository().GetCartItem(cartItemsDTO.ProductVariantId, userId)
                 is not null ? true : false;
-            var ProuductVariant = _unitOfWork.Repository<ProductVariants>().GetById(cartItemsDTO.ProductVariantId);
-            if(!IsExisit && ProuductVariant is not null)
+            
+            if(!IsExisit)
             {
-                _unitOfWork.Repository<CartItems>().Add(Item);
-                _unitOfWork.Commit();
+                var ProuductVariant = _unitOfWork.Repository<ProductVariants>().GetById(cartItemsDTO.ProductVariantId);
+                if (ProuductVariant is not null)
+                {
+                    _unitOfWork.Repository<CartItems>().Add(Item);
+                    _unitOfWork.Commit();
+                }
             }
             return Cart(userId);
         }
 
-        public List<RetriveCartItemsDTO> Cart(string userId)
+        public IEnumerable<RetriveCartItemsDTO> Cart(string userId)
         {
-            List<RetriveCartItemsDTO> CartItems = new List<RetriveCartItemsDTO>();
-            var Cart = _unitOfWork.Repository<Cart>().GetByIdWithSpec(userId, new CartSpecifications(c =>c.UserId ==  userId));
-            var Result = _unitOfWork.Repository<CartItems>().ThenInclude<ProductVariants , Product>(p=>p.Product , c=>c.ProductVariants);
-            CartItems = _mapper.Map(Result, CartItems);
-            return CartItems;
+            var CartItems = _unitOfWork.CartRepository().CartItems(userId);
+            return _mapper.Map<IEnumerable<RetriveCartItemsDTO>>(CartItems);
         }
 
         public Cart CreateCart(User user)
@@ -52,35 +53,33 @@ namespace OnlineStore.Application.Services
             };
             _unitOfWork.Repository<Cart>().Add(NewCart);
             _unitOfWork.Commit();
-            return _unitOfWork.Repository<Cart>().GetByIdWithSpec(user.Id, new CartSpecifications(c => c.UserId == user.Id));
+            return _unitOfWork.CartRepository().Cart(user.Id);
         }
 
         public async Task<int> RemoveCartItems(string userId)
         {
-            var Cart = _unitOfWork.Repository<Cart>().GetByIdWithSpec(userId, new BaseSpecification<Cart>(c => c.UserId == userId));
-            var sql = $"DELETE FROM [dbo].[CartItems] \r\n  WHERE CartId ={Cart.Id}";
-            var NoOfEffectedRow =await  _unitOfWork.Repository<Cart>().Delete(sql , Cart.Id);
+            var Cart = _unitOfWork.CartRepository().Cart(userId);
+            var NoOfEffectedRow =await _unitOfWork.CartRepository().DeleteAllCartItems(Cart.Id);
             return NoOfEffectedRow;
         }
 
-        public List<RetriveCartItemsDTO> RemoveItemFromCart(int CartItemId , string userId)
+        public IEnumerable<RetriveCartItemsDTO> RemoveItemFromCart(int CartItemId , string userId)
         {
-            var cartItemRepo = _unitOfWork.Repository<CartItems>();
-            var CartItem = cartItemRepo.GetById(CartItemId);
+            var CartItem = _unitOfWork.Repository<CartItems>().GetById(CartItemId);
             if(CartItem is not null)
             {
-                cartItemRepo.Delete(CartItemId);
+                _unitOfWork.Repository<CartItems>().Delete(CartItemId);
                 _unitOfWork.Commit();
             }
             return Cart(userId);
         }
 
-        public List<RetriveCartItemsDTO> UpdateCartProudctQuantity(UpdateCartItemDTO UpdatecartItemsDTO, string userId)
+        public IEnumerable<RetriveCartItemsDTO> UpdateCartProudctQuantity(UpdateCartItemDTO UpdatecartItemsDTO, string userId)
         {
             var cartItem = _unitOfWork.Repository<CartItems>().GetById(UpdatecartItemsDTO.cartItemID);
             if(cartItem is not null)
             {
-                cartItem = _mapper.Map(UpdatecartItemsDTO, cartItem);
+                cartItem.Qunatity = UpdatecartItemsDTO.Quanity;
                 _unitOfWork.Repository<CartItems>().Update(cartItem);
                 _unitOfWork.Commit();
             }

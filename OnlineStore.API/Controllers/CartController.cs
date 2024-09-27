@@ -20,7 +20,7 @@ namespace OnlineStore.API.Controllers
             _cartServices = cartServices;
             //UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
-        [HttpGet("Cart")]
+        [HttpGet]
         public ActionResult<GeneralResponse<IEnumerable<RetriveCartItemsDTO>>> Cart()
         {
             GeneralResponse<IEnumerable<RetriveCartItemsDTO>> Response = new GeneralResponse<IEnumerable<RetriveCartItemsDTO>>(false, "An Error Accoured Please Try Again Later");

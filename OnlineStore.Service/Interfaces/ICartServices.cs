@@ -11,13 +11,13 @@ namespace OnlineStore.Application.Interfaces
     {
         public Cart CreateCart(User user);
 
-        public List<RetriveCartItemsDTO> Cart(string userId);
+        public IEnumerable<RetriveCartItemsDTO> Cart(string userId);
 
-        public List<RetriveCartItemsDTO> AddToCart( CreateCartItemDTO cartItemsDTO , string userId);
+        public IEnumerable<RetriveCartItemsDTO> AddToCart( CreateCartItemDTO cartItemsDTO , string userId);
 
-        public List<RetriveCartItemsDTO> UpdateCartProudctQuantity(UpdateCartItemDTO UpdatecartItemsDTO, string userId);
+        public IEnumerable<RetriveCartItemsDTO> UpdateCartProudctQuantity(UpdateCartItemDTO UpdatecartItemsDTO, string userId);
 
-        public List<RetriveCartItemsDTO> RemoveItemFromCart(int CartItemId , string userId);
+        public IEnumerable<RetriveCartItemsDTO> RemoveItemFromCart(int CartItemId , string userId);
 
         public Task<int> RemoveCartItems(string  userId);
 

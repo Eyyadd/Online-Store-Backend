@@ -10,14 +10,16 @@ namespace OnlineStore.Application.Services
 {
     public class FilterService : IFilterService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Product> _productRepository;
 
-        public FilterService(IRepository<Product> productRepository)
+        public FilterService(IUnitOfWork unitOfWork)
         {
-            _productRepository = productRepository;
+            _unitOfWork = unitOfWork;
+            _productRepository = _unitOfWork.Repository<Product>();
         }
 
-        public  List<ProductDTO> FilterByPrice(decimal minPrice, decimal maxPrice)
+        public List<ProductDTO> FilterByPrice(decimal minPrice, decimal maxPrice)
         {
             var products = _productRepository
                 .GetAll()
@@ -35,7 +37,7 @@ namespace OnlineStore.Application.Services
 
         public List<ProductDTO> FilterBySale()
         {
-            var products =  _productRepository
+            var products = _productRepository
                 .GetAll()
                 .Where(p => p.Discounted)
                 .Select(p => new ProductDTO

@@ -6,6 +6,7 @@ namespace OnlineStore.Domain.Interfaces
     public interface IRepository<T> where T : BaseEntity
     {
         IEnumerable<T> GetAll();
+        public IQueryable<T> GetAll(string query, int size);
         IEnumerable<T> GetAll(Func<T , bool> Predicate);
         IEnumerable<T> GetAllWithSpec(ISpecifications<T> specifications);
         T GetById(int id);
@@ -17,7 +18,12 @@ namespace OnlineStore.Domain.Interfaces
         void Update(T entity);
         void Delete(int id);
         public Task<int> Delete(string SqlQuery, int CartId);
-        public IEnumerable<T> GetTop<TKey>(Func<T, TKey> Selector, int Size);
+
+
+        //public IQueryable<T> DynamicQuery(Expression<Func<T, bool>>? WherwCondition
+        //    ,Expression<Func<IQueryable<T> , IOrderedQueryable<T>>>?  Order
+        //    ,Expression<Func<IQueryable<T>, IQueryable<object>>>[] ? Includes
+        //    ,Expression<Func<IQueryable<T>, IQueryable<object>>>[]? ThenIncludes);
 
     }
 }

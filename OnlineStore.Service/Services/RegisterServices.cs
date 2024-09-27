@@ -21,6 +21,8 @@ namespace OnlineStore.Service.Services
             service.AddScoped<IOwnerService, OwnerService>();
             service.AddScoped<IDiscountService, DiscountService>();
             service.AddScoped<ICartServices, CartServices>();
+            service.AddScoped<IFilterService, FilterService>();
+            service.AddScoped<IProductServices, ProductServices>();
             
         }
     }
