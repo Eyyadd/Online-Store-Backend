@@ -13,6 +13,7 @@ namespace OnlineStore.Application.DTOs.Products
         public string seller { get; set; } = null!;
         public decimal price { get; set; }
         public string CategoryName { get; set; } = null!;
+        public string CoverImage { get; set; } = null!;
 
         public IEnumerable<ProductVariantDTO> Variants { get; set; }
     }

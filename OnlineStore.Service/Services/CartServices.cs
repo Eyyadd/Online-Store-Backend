@@ -23,7 +23,12 @@ namespace OnlineStore.Application.Services
 
         public IEnumerable<RetriveCartItemsDTO> AddToCart( CreateCartItemDTO cartItemsDTO , string userId)
         {
-            var Item = _mapper.Map<CartItems>(cartItemsDTO);
+            var Item = new CartItems
+            {
+                ProductID = cartItemsDTO.ProductVariantId,
+                Qunatity = cartItemsDTO.CartQuantity
+
+            };
             var IsExisit = _unitOfWork.CartRepository().GetCartItem(cartItemsDTO.ProductVariantId, userId)
                 is not null ? true : false;
             
@@ -32,6 +37,8 @@ namespace OnlineStore.Application.Services
                 var ProuductVariant = _unitOfWork.Repository<ProductVariants>().GetById(cartItemsDTO.ProductVariantId);
                 if (ProuductVariant is not null)
                 {
+                    var Cart = _unitOfWork.CartRepository().Cart(userId);
+                    Item.CartId = Cart.Id;
                     _unitOfWork.Repository<CartItems>().Add(Item);
                     _unitOfWork.Commit();
                 }

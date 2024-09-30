@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineStore.Application.DTOs.Products;
+using OnlineStore.Application.Helper;
 using OnlineStore.Application.Interfaces;
 using OnlineStore.Application.Services;
 using OnlineStore.Service.Helper;
@@ -96,30 +97,13 @@ namespace OnlineStore.API.Controllers
         [HttpPost("Create")]
         public async Task<GeneralResponse<ProductElementDTO>> Add(CreateProductDTO createProductDTO )
         {
-            var ImageName = $"{Guid.NewGuid()}{Path.GetExtension(createProductDTO.ImageCover.FileName)}";
-            var FolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images");
-            if (!Directory.Exists(FolderPath))
-            {
-                Directory.CreateDirectory(FolderPath);
-            }
-            var ImageRealPath = Path.Combine(FolderPath, ImageName);
-            using (var stream = new FileStream(ImageRealPath, FileMode.Create))
-            {
-                await createProductDTO.ImageCover.CopyToAsync(stream);
-            }
-            var ImagePathToRestor = $"Images/{ImageName}";
+            var ImagePathToRestor = await ImageUpload.UploadImageAsync(createProductDTO.ImageCover);
             var Result =  _productServices.CreateProduct(createProductDTO , ImagePathToRestor);
             return new GeneralResponse<ProductElementDTO>(true, "", Result);
 
         }
 
         [HttpGet("BestSeller")]
-        //public GeneralResponse<IQueryable<BestSeller>> BestSeller(int size)
-        //{
-        //    var Result = _productServices.BestSellerProducts(size);
-        //    return new GeneralResponse<IQueryable<BestSeller>>(true, "", Result);
-
-        //}
         public GeneralResponse<IEnumerable<ProductElementDTO>> BestSeller(int size)
         {
             var Result = _productServices.BestSellerProducts(size);

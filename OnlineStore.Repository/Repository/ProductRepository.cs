@@ -58,6 +58,15 @@ namespace OnlineStore.Infrastrucutre.Repository
                 .Take(size);
         }
 
+        //public Product ProductDetails(int ProductId)
+        //{
+        //    var Prod = Products.Where(p => p.Id == ProductId)
+        //            .Include(p => p.ProductVariants)
+        //            .Include(p => p.SubCategory)
+        //            .FirstOrDefault();
+        //    return Prod;
+        //}
+
         public Product ProductDetails(int ProductId)
         {
             var Prod = Products.Where(p => p.Id == ProductId)
@@ -66,6 +75,8 @@ namespace OnlineStore.Infrastrucutre.Repository
                     .FirstOrDefault();
             return Prod;
         }
+
+
 
         public IQueryable<Product> ProductHaveSale()
         {

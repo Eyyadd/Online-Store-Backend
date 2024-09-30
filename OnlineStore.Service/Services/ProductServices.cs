@@ -65,8 +65,14 @@ namespace OnlineStore.Application.Services
             var product = _unitOfWork.ProductRepository().ProductDetails(id);
             var ProductInfo = new
             {
-                product.Id, product.Name, product.Price, product.Seller, CategoryName = product.SubCategory.Name
+                product.Id,
+                product.Name,
+                product.Price, 
+                product.Seller,
+                CategoryName = product.SubCategory.Name,
+                product.ImageCover
             };
+
             var variants = product.ProductVariants.Select(v => new ProductVariantDTO
             {
                 Id = v.Id,
@@ -74,7 +80,8 @@ namespace OnlineStore.Application.Services
                 Image = v.Image,
                 Quantity = v.Quantity,
                 Size = v.Size
-            }).OrderBy(v => v.Color);
+            })
+            .OrderBy(v => v.Color);
 
             ProductDetailsDTO productDetailsDTO = new ProductDetailsDTO
             {
@@ -83,6 +90,7 @@ namespace OnlineStore.Application.Services
                 CategoryName = ProductInfo.CategoryName,
                 Name = ProductInfo.Name,
                 seller = ProductInfo.Seller,
+                CoverImage =ProductInfo.ImageCover,
                 Variants = variants
             };
             return productDetailsDTO;

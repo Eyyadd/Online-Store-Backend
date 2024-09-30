@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Application.DTOs.Products
 {
+    
     public class ProductVariantDTO
     {
         public int Id { get; set; }

@@ -34,8 +34,8 @@ namespace OnlineStore.Application.Mappign
 
             CreateMap<CreateCartItemDTO, CartItems>()
                 .ForMember(cart => cart.ProductID, opt => opt.MapFrom(dto => dto.ProductVariantId))
-                .ForMember(cart => cart.Qunatity , opt => opt.MapFrom(dto => dto.CartQuantity))
-                .ForMember(cart => cart.CartId , opt => opt.MapFrom(dto => dto.CartId));
+                .ForMember(cart => cart.Qunatity, opt => opt.MapFrom(dto => dto.CartQuantity));
+                
 
             CreateMap<UpdateCartItemDTO, CartItems>();
 
