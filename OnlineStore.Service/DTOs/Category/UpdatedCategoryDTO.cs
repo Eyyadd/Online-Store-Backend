@@ -1,22 +1,18 @@
 ﻿using OnlineStore.Domain.Utilities.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineStore.Application.DTOs
+namespace OnlineStore.Application.DTOs.Category
 {
-    public class CategoriesDTO
+    public class UpdatedCategoryDTO
     {
-        [MaxLength(40)]
-        [MinLength(2)]
-
         public string Name { get; set; }
         public int Id { get; set; }
-        public DateTime CreatedAt { get; set; }
-        [Range(0, 2)]
+        public DateTime UpdatedAt { get; set; }= DateTime.Now;
         public CategoryType CategoryType { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

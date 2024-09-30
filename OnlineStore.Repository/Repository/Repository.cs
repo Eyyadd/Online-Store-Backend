@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineStore.Domain.Specifications;
+using OnlineStore.Domain.Utilities.Enums;
 using OnlineStore.Infrastrucutre;
 using System.Linq.Expressions;
 
@@ -7,7 +8,7 @@ namespace OnlineStore.Application.Repository
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        private OnlineStoreDbContext _context;
+        protected OnlineStoreDbContext _context;
 
         public Repository(OnlineStoreDbContext context)
         {
@@ -94,9 +95,18 @@ namespace OnlineStore.Application.Repository
             return _context.Set<T>().FromSqlRaw(query);
         }
 
-        //public IQueryable<T> DynamicQuery(Expression<Func<T, bool>>? WherwCondition, Expression<Func<IQueryable<T>, IOrderedQueryable<T>>>? Order, Expression<Func<IQueryable<T>, IQueryable<object>>>[]? Includes, Expression<Func<IQueryable<T>, IQueryable<object>>>[]? ThenIncludes)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public T GetByIdWithNoTracking(int id)
+        {
+            var entity = _context.Set<T>().AsNoTracking().FirstOrDefault(c => c.Id == id);
+            return entity;
+        }
+
+        //مؤقتا وهعدلها 
+        public Category GetByNameWithNoTracking(string Name)
+        {
+            var Category = _context.Categories.AsNoTracking().FirstOrDefault(c => c.Name == Name);
+            return Category;
+        }
+
     }
 }

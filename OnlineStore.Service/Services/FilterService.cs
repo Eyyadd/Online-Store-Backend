@@ -1,4 +1,5 @@
-﻿using OnlineStore.Application.DTOs;
+﻿using AutoMapper;
+using OnlineStore.Application.DTOs;
 using OnlineStore.Application.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,44 +12,43 @@ namespace OnlineStore.Application.Services
     public class FilterService : IFilterService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Product> _productRepository;
+        private readonly IFilterationRepository _productRepository;
+        private readonly IMapper _Mapper;
 
-        public FilterService(IUnitOfWork unitOfWork)
+
+        public FilterService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _productRepository = _unitOfWork.Repository<Product>();
+            _productRepository = _unitOfWork.FilterationRepository();
+            _Mapper = mapper;
         }
 
-        public List<ProductDTO> FilterByPrice(decimal minPrice, decimal maxPrice)
+        public IEnumerable<ProductDTO> FilterByPrice(decimal minPrice, decimal maxPrice)
         {
-            var products = _productRepository
-                .GetAll()
-                .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
-                .Select(p => new ProductDTO
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Price = p.Price
-                })
-                .ToList();
+            if (minPrice < 0 || maxPrice < 0 || minPrice > maxPrice)
+            {
+                return Enumerable.Empty<ProductDTO>();
+            }
+            var FilteredProducts = _productRepository.FilterByPrice(minPrice, maxPrice);
+            if (FilteredProducts.Any())
+            {
+                var FilteredProductsMapping = _Mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(FilteredProducts);
+                return FilteredProductsMapping;
+            }
+            return Enumerable.Empty<ProductDTO>();
 
-            return products;
+
         }
 
-        public List<ProductDTO> FilterBySale()
+        public IEnumerable<ProductDTO> FilterBySale()
         {
-            var products = _productRepository
-                .GetAll()
-                .Where(p => p.Discounted)
-                .Select(p => new ProductDTO
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Price = p.Price
-                })
-                .ToList();
-
-            return products;
+            var FilteredProducts = _productRepository.FilterBySale();
+            if (FilteredProducts.Any())
+            {
+                var FilteredProductsMapping = _Mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(FilteredProducts);
+                return FilteredProductsMapping;
+            }
+            return Enumerable.Empty<ProductDTO>();
 
         }
     }

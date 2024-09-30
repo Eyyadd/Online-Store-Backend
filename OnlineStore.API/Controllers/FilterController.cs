@@ -1,4 +1,5 @@
-﻿using OnlineStore.Application.Interfaces;
+﻿using OnlineStore.Application.DTOs;
+using OnlineStore.Application.Interfaces;
 
 namespace OnlineStore.API.Controllers
 {
@@ -19,20 +20,31 @@ namespace OnlineStore.API.Controllers
         [HttpGet("FilterByPrice")]
         public IActionResult FilterByPrice( decimal minPrice, decimal maxPrice)
         {
-            if (minPrice < 0 || maxPrice < 0 || minPrice > maxPrice)
-            {
-                return BadRequest("Invalid price range.");
-            }
-
+            var response = new GeneralResponse<IEnumerable<ProductDTO>>(false, "No filteration result", []);
             var products = _filterService.FilterByPrice(minPrice, maxPrice);
-            return Ok(products);
+            if (products.Any())
+            {
+                response.Success = true;
+                response.Message = "Filteration By Price Successfully";
+                response.Data = products;
+                return Ok(response);
+            }
+            return BadRequest(response);
         }
 
         [HttpGet("FilterBySale")]
         public IActionResult FilterBySale()
         {
+            var response = new GeneralResponse<IEnumerable<ProductDTO>>(false, "No filteration result", []);
             var products = _filterService.FilterBySale();
-            return Ok(products);
+            if (products.Any())
+            {
+                response.Success = true;
+                response.Message = "Filteration By Sale Successfully";
+                response.Data = products;
+                return Ok(response);
+            }
+            return BadRequest(response);
         }
     }
 }

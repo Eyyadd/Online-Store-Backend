@@ -1,4 +1,7 @@
-﻿using OnlineStore.Application.Interfaces;
+﻿using AutoMapper;
+using OnlineStore.Application.DTOs;
+using OnlineStore.Application.DTOs.Category;
+using OnlineStore.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,37 +13,69 @@ namespace OnlineStore.Application.Services
     public class CategoryServices : ICategoryServices
     {
         private IUnitOfWork _unitOfWork;
-        private IRepository<Category> Categories;
+        private ICategoryRepository Categories;
+        private readonly IMapper _mapper;
 
-        public CategoryServices(IUnitOfWork unitOfWork)
+        public CategoryServices(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            Categories = _unitOfWork.Repository<Category>();
+            Categories = _unitOfWork.CategoryRepository();
+            _mapper = mapper;
         }
 
-        public void AddCategory(Category category)
+        public int AddCategory(CategoriesDTO category)
         {
-            Categories.Add(category);
+            var IsExist = Categories.GetByNameAndType(category.Name, category.CategoryType);
+            int EffectedRow = -1;
+            if (IsExist is null)
+            {
+                var NewCategory = _mapper.Map<Category>(category);
+                Categories.Add(NewCategory);
+                EffectedRow = _unitOfWork.Commit();
+            }
+            return EffectedRow;
         }
 
-        public IEnumerable<Category> GetCategories()
+        public IEnumerable<CategoriesDTO> GetCategories()
         {
-            return Categories.GetAll();
+            var AllCategories = _mapper.Map<IEnumerable<CategoriesDTO>>(Categories.GetAll());
+            return AllCategories;
         }
 
-        public Category GetCategory(int id)
+        public CategoriesDTO GetCategory(int id)
         {
-            return Categories.GetById(id);
+            var Category = _mapper.Map<CategoriesDTO>(Categories.GetById(id));
+            return Category;
         }
 
-        public void RemoveCategory(int id)
+        public int RemoveCategory(int id)
         {
-            Categories.Delete(id);
+            var CheckCategory = Categories.GetById(id);
+            var DeleteResult = -1;
+            if (CheckCategory is not null)
+            {
+                Categories.Delete(id);
+                DeleteResult = _unitOfWork.Commit();
+            }
+            return DeleteResult;
+
         }
 
-        public void UpdateCategory(Category category)
+        //TODO Delete ID
+        public int UpdateCategory(UpdatedCategoryDTO category)
         {
-            Categories.Update(category);
+            var IsExistCategory = Categories.GetByIdWithNoTracking(category.Id);
+            var UpdateResult = -1;
+
+            if (IsExistCategory is not null)
+            {
+                IsExistCategory = _mapper.Map<UpdatedCategoryDTO, Category>(category);
+                Categories.Update(IsExistCategory);
+                UpdateResult = _unitOfWork.Commit();
+            }
+
+            return UpdateResult;
+
         }
     }
 }

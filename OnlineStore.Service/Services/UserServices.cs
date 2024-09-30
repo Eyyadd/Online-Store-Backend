@@ -31,12 +31,12 @@ namespace OnlineStore.Application.Services
             return _userManager.Users.ToList();
         }
 
-        public void AssignRoleToUser(string userEmail, string roleName)
+        public async Task AssignRoleToUser(string userEmail, string roleName)
         {
             var user = _userManager.FindByEmailAsync(userEmail).Result;
             if (user != null)
             {
-                _userManager.AddToRoleAsync(user, roleName).Wait();
+                await _userManager.AddToRoleAsync(user, roleName);
             }
         }
 

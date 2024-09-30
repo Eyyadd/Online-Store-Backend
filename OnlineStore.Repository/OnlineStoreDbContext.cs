@@ -28,5 +28,6 @@ namespace OnlineStore.Application
         public DbSet<Category> SubCategories { get; set; }
         public DbSet<Wishlist> Wishlist { get; set; }
         public DbSet<BestSeller> BestSellers { get; set; }
+        public DbSet<OrderItems> OrderItems { get; set; }
     }
 }

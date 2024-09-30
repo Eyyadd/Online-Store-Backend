@@ -5,48 +5,43 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using OnlineStore.Application.DTOs;
+using OnlineStore.Application.DTOs.Wishlist;
+using AutoMapper;
 
 namespace OnlineStore.Infrastructure.Services
 {
     public class WishlistService : IWishlistService
     {
         private readonly IUnitOfWork _unitOfWork;
-        IRepository<Wishlist> wishlistRepository;
+        IWishlistRepository wishlistRepository;
         IRepository<ProductVariants> productVariantRepository;
         IRepository<ProductWishlist> productWishlistRepository;
         IRepository<Product> productRepository;
+        private IMapper _mapper;
 
-        public WishlistService(IUnitOfWork unitOfWork)
+        public WishlistService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            wishlistRepository = _unitOfWork.Repository<Wishlist>();
+            wishlistRepository = _unitOfWork.WishlistRepository();
             productVariantRepository = _unitOfWork.Repository<ProductVariants>();
             productWishlistRepository = _unitOfWork.Repository<ProductWishlist>();
             productRepository = _unitOfWork.Repository<Product>();
+            _mapper = mapper;
         }
 
-        public bool AddToWishlist(int productVariantId, string userId)
+        public ProductWishlist AddToWishlist(int productVariantId, string userId)
         {
+            bool AddedDone = false;
             var productVariant = productVariantRepository.GetById(productVariantId);
-            if (productVariant == null)
+            if (productVariant is null)
             {
-                throw new Exception("Product variant not found.");
+                return null;
             }
 
-            var wishlist = wishlistRepository.GetAll().FirstOrDefault(w => w.UserId == userId);
-            if (wishlist == null)
+            var wishlist = wishlistRepository.GetWishlistByUserID(userId);
+            if (wishlist.ProductVariants is not null && wishlist.ProductVariants.Any(pv => pv.Id == productVariantId))
             {
-                wishlist = new Wishlist
-                {
-                    UserId = userId,
-                    ProductVariants = new List<ProductVariants>()
-                };
-                wishlistRepository.Add(wishlist);
-            }
-
-            if (wishlist.ProductVariants != null && wishlist.ProductVariants.Any(pv => pv.Id == productVariantId))
-            {
-                return false;
+                return null;
             }
 
             wishlist.ProductVariants?.Add(productVariant);
@@ -62,71 +57,75 @@ namespace OnlineStore.Infrastructure.Services
 
             _unitOfWork.Commit();
 
-            return true;
+            return productWishlist;
         }
-        public async Task RemoveFromWishlist(int productVariantId, string userId)
+        public int RemoveFromWishlist(int productVariantId, string userId)
         {
-            var wishlist = wishlistRepository.GetAll().FirstOrDefault(w => w.UserId == userId);
-            var wishlistItem = productWishlistRepository.GetAll()
-            .FirstOrDefault(pw => pw.Id == productVariantId && pw.wishlistId == wishlist.Id);
-
-
-            if (wishlistItem == null)
+            var wishlist = wishlistRepository.GetWishlistByUserID(userId);
+            
+            var wishlistItem = wishlistRepository.GetProductWishlist(productVariantId, wishlist.Id);
+            int DeleteResult = -1;
+            if (wishlistItem is not null)
             {
-                throw new Exception("Item not found in wishlist.");
+                productWishlistRepository.Delete(wishlistItem.Id);
+                DeleteResult = _unitOfWork.Commit();
+                return DeleteResult;
             }
+            return DeleteResult;
 
-            productWishlistRepository.Delete(wishlistItem.Id);
-            _unitOfWork.Commit();
         }
 
-
+        // لسة عاوزة تتهندل 
         public List<ProductVariantWishlistDTO> GetWishlistProducts(string userId)
         {
-            var wishlist = wishlistRepository
-                     .GetAll()
-                     .FirstOrDefault(w => w.UserId == userId);
+            var wishlist = wishlistRepository.GetWishlistByUserID(userId);
 
-            if (wishlist == null)
+
+            if (wishlist is not null)
             {
-                return new List<ProductVariantWishlistDTO>();
+
+                var wishlistProducts = productWishlistRepository
+                    .GetAll()
+                    .Where(pw => pw.wishlistId == wishlist.Id)
+                    .Join(
+                        productVariantRepository.GetAll(),
+                        pw => pw.ProductId,
+                        pv => pv.ProductId,
+                        (pw, pv) => new { pw, pv }
+                       )
+                    .Join(
+                        productRepository.GetAll(),
+                        joined => joined.pv.ProductId,
+                        p => p.Id,
+                        (joined, p) => new ProductVariantWishlistDTO
+                        {
+                            ProductVariantId = joined.pv.ProductId,
+                            Name = p.Name,
+                            Price = p.Price,
+                            Image = joined.pv.Image
+                        }
+                    ).ToList();
+
+                return wishlistProducts;
             }
+            return [];
 
-            var wishlistProducts = productWishlistRepository
-                .GetAll()
-                .Where(pw => pw.wishlistId == wishlist.Id) 
-                .Join(
-                    productVariantRepository.GetAll(),
-                    pw => pw.ProductId,
-                    pv => pv.ProductId, 
-                    (pw, pv) => new { pw, pv }
-                   )
-                .Join(
-                    productRepository.GetAll(),
-                    joined => joined.pv.ProductId,
-                    p => p.Id,
-                    (joined, p) => new ProductVariantWishlistDTO
-                    {
-                        ProductVariantId = joined.pv.ProductId,
-                        Name = p.Name,
-                        Price = p.Price,
-                        Image = joined.pv.Image
-                    }
-        )
-                .ToList();
-
-            return wishlistProducts;
         }
 
-        public void Create(string userId)
+        public CreatedWishlistDTO Create(string userId)
         {
-            var newWishlist = new Wishlist
+            var CreatedResult = -1;
+            var IsCreated = wishlistRepository.Create(userId);
+            if (IsCreated is not null)
             {
-                UserId = userId
-            };
-
-            wishlistRepository.Add(newWishlist);
-            _unitOfWork.Commit();
+                CreatedResult = _unitOfWork.Commit();
+                if (CreatedResult > 0)
+                {
+                    var Wishlistmapping = _mapper.Map<Wishlist, CreatedWishlistDTO>(IsCreated);
+                    return Wishlistmapping;
+                }
+            }
+            return null;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using OnlineStore.Application.DTOs.User;
+﻿using OnlineStore.Application.DTOs.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Application.Interfaces
 {
-    public interface IOwnerService
+    public interface IOrderService
     {
-        IList<UsersDTO> GetAllOwners();
+        IEnumerable<GetOrderItems> GetOrdersByUserID(string UserId);
     }
 }

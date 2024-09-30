@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineStore.Application.DTOs.Category;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,10 @@ namespace OnlineStore.Application.Interfaces
 {
     public interface ICategoryServices
     {
-        IEnumerable<Category> GetCategories();
-        Category GetCategory(int id);
-        void AddCategory(Category category);
-        void RemoveCategory(int id);
-        void UpdateCategory(Category category);
+        IEnumerable<CategoriesDTO> GetCategories();
+        CategoriesDTO GetCategory(int id);
+        int AddCategory(CategoriesDTO category);
+        int RemoveCategory(int id);
+        int UpdateCategory(UpdatedCategoryDTO category);
     }
 }

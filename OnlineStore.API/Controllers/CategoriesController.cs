@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineStore.Application.DTOs;
+using OnlineStore.Application.DTOs.Category;
 using OnlineStore.Application.Interfaces;
 using OnlineStore.Domain.Interfaces;
 
@@ -25,109 +25,83 @@ namespace OnlineStore.API.Controllers
         //[Authorize(AuthenticationSchemes ="Bearer")]
         public IActionResult GetAll()
         {
-            try
+            var categories = _categoryServices.GetCategories();
+            if (categories.Any())
             {
-                var categories = _categoryServices.GetCategories();
-                if (categories.Any())
-                {
-                    return Ok(new GeneralResponse<IEnumerable<CategoriesDTO>>(true, "Categories retrieved successfully", _Mapper.Map<IEnumerable<CategoriesDTO>>(categories)));
-                }
-                return Ok(new GeneralResponse<string>(false, "No categories available"));
+                return Ok(new GeneralResponse<IEnumerable<CategoriesDTO>>(true, "Categories retrieved successfully", categories));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new GeneralResponse<string>(false, "An error occurred while retrieving categories.", ex.Message));
-            }
+            return Ok(new GeneralResponse<string>(false, "No categories available"));
+
         }
 
-        [HttpGet("Get/{id:int}")]
+        [HttpGet("GetById/{id:int}")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult GetById(int id)
         {
-            try
+
+            var category = _categoryServices.GetCategory(id);
+            if (category is not null)
             {
-                var category = _categoryServices.GetCategory(id);
-                if (category != null)
-                {
-                    return Ok(new GeneralResponse<CategoriesDTO>(true, "Category retrieved successfully", _Mapper.Map<CategoriesDTO>(category)));
-                }
-                return Ok(new GeneralResponse<string>(false, $"No category found with ID: {id}"));
+                return Ok(new GeneralResponse<CategoriesDTO>(true, "Category retrieved successfully", category));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new GeneralResponse<string>(false, "An error occurred while retrieving the category.", ex.Message));
-            }
+            return Ok(new GeneralResponse<string>(false, $"No category found with ID: {id}"));
+
         }
 
         [HttpPost("Add")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
-        public IActionResult Add(CategoriesDTO newCategory)
+        public ActionResult<GeneralResponse<CategoriesDTO>> Add(CategoriesDTO newCategory)
         {
-            try
+            var Response = new GeneralResponse<CategoriesDTO>(false, "Not Added yet", null);
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var AddResult = _categoryServices.AddCategory(newCategory);
+                if (AddResult > 0)
                 {
-                    var addedCategory = _Mapper.Map<Category>(newCategory);
-                    _categoryServices.AddCategory(addedCategory);
-                    _unitOfWork.Commit();
-                    return Ok(new GeneralResponse<Category>(true, "Category added successfully", addedCategory));
+                    Response.Success = true;
+                    Response.Message = $"Category - {newCategory.Name} - Added Successfully";
+                    Response.Data = newCategory;
+
                 }
-                return Ok(new GeneralResponse<string>(false, "Failed to add category. Invalid data."));
+                else
+                {
+                    Response.Success = false;
+                    Response.Message = $"Can't Add this Category {newCategory.Name}";
+                    Response.Data = newCategory;
+                }
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new GeneralResponse<string>(false, "An error occurred while adding the category.", ex.Message));
-            }
+            return Response;
         }
 
         [HttpPut("Update")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
-        public IActionResult Update(int id, CategoriesDTO updatedCategory)
+        public IActionResult Update(UpdatedCategoryDTO updatedCategory)
         {
-            try
+
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var UpdateResult= _categoryServices.UpdateCategory(updatedCategory);
+                if (UpdateResult > 0) 
                 {
-                    var existingCategory = _categoryServices.GetCategory(id);
-                    if (existingCategory != null)
-                    {
-                        // Map updated data to the existing entity
-                        _Mapper.Map(updatedCategory, existingCategory);
-
-                        _categoryServices.UpdateCategory(existingCategory);
-                        _unitOfWork.Commit();
-
-                        return Ok(new GeneralResponse<Category>(true, "Category updated successfully", existingCategory));
-                    }
-                    return Ok(new GeneralResponse<string>(false, $"No category found with ID: {id}"));
+                     return Ok(new GeneralResponse<UpdatedCategoryDTO>(true, "Category updated successfully", updatedCategory));
                 }
-                return Ok(new GeneralResponse<string>(false, "Failed to update category. Invalid data."));
+                return NotFound(new GeneralResponse<string>(false, $"No category found with ID: {updatedCategory.Id}"));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new GeneralResponse<string>(false, "An error occurred while updating the category.", ex.Message));
-            }
+            return BadRequest(new GeneralResponse<string>(false,"Wrong Category"));
+
         }
 
         [HttpDelete("Delete/{id:int}")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult Delete(int id)
         {
-            try
+            var DeleteCategory = _categoryServices.RemoveCategory(id);
+            if (DeleteCategory > 0)
             {
-                var category = _categoryServices.GetCategory(id);
-                if (category != null)
-                {
-                    _categoryServices.RemoveCategory(id);
-                    _unitOfWork.Commit();
-                    return Ok(new GeneralResponse<string>(true, "Category deleted successfully"));
-                }
-                return Ok(new GeneralResponse<string>(false, $"Failed to delete category. No category found with ID: {id}"));
+                return Ok(new GeneralResponse<string>(true, "Category deleted successfully"));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new GeneralResponse<string>(false, "An error occurred while deleting the category.", ex.Message));
-            }
+            return Ok(new GeneralResponse<string>(false, $"Failed to delete category. No category found with ID: {id}"));
+
         }
     }
 }
