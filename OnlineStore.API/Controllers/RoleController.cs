@@ -23,8 +23,6 @@ namespace OnlineStore.API.Controllers
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult CreateRole(RolteDTO roleDto)
         {
-            try
-            {
                 if (ModelState.IsValid)
                 {
                     var roleExists = _roleServices.RoleExists(roleDto.Name);
@@ -37,19 +35,14 @@ namespace OnlineStore.API.Controllers
                     return Ok(new GeneralResponse<string>(true, "Role created successfully"));
                 }
                 return BadRequest(new GeneralResponse<string>(false, "Invalid role data."));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new GeneralResponse<string>(false, "An error occurred while creating the role.", ex.Message));
-            }
+           
         }
 
         [HttpPost("Assign")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult AssignRoleToUser(string userEmail, string roleName)
         {
-            try
-            {
+            
                 if (string.IsNullOrEmpty(userEmail) || string.IsNullOrEmpty(roleName))
                 {
                     return BadRequest(new GeneralResponse<string>(false, "User email and role name are required."));
@@ -69,11 +62,7 @@ namespace OnlineStore.API.Controllers
 
                 _userServices.AssignRoleToUser(userEmail, roleName);
                 return Ok(new GeneralResponse<string>(true, "Role assigned to user successfully"));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new GeneralResponse<string>(false, "An error occurred while assigning the role.", ex.Message));
-            }
+            
         }
     }
 }

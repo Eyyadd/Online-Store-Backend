@@ -1,4 +1,6 @@
-﻿using OnlineStore.Application.Interfaces;
+﻿using AutoMapper;
+using OnlineStore.Application.DTOs.Discount;
+using OnlineStore.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,71 +9,88 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Application.Services
 {
-    public class DiscountService: IDiscountService
+    public class DiscountService : IDiscountService
     {
         private IUnitOfWork _unitOfWork;
         private IRepository<Discount> _discounts;
         private IRepository<Product> _products;
+        private readonly IMapper _Mapper;
 
-        public DiscountService(IUnitOfWork unitOfWork)
+        public DiscountService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _discounts = _unitOfWork.Repository<Discount>();
             _products = _unitOfWork.Repository<Product>();
+            _Mapper = mapper;
         }
 
-        public IEnumerable<Discount> GetAllDiscounts()
+        public IEnumerable<DiscountDTO> GetAllDiscounts()
         {
-            return _discounts.GetAll();
+            var AllDiscounts = _Mapper.Map<IEnumerable<Discount>, IEnumerable<DiscountDTO>>(_discounts.GetAll());
+
+            return AllDiscounts;
         }
 
-        public Discount GetDiscountById(int id)
+        public DiscountDTO GetDiscountById(int id)
         {
-            return _discounts.GetById(id) ?? throw new ArgumentException($"Discount with ID {id} not found.");
+            var Disount = _Mapper.Map<Discount, DiscountDTO>(_discounts.GetById(id));
+            return Disount;
         }
 
-        public void AddDiscount(Discount discount)
+        public int AddDiscount(AddDiscountDTO discount)
         {
-            _discounts.Add(discount);
-            _unitOfWork.Commit();
+            var checkDiscount = _discounts.GetByNameWithNoTracking(discount.Name);
+            var AddedResult = -1;
+            if (checkDiscount is null)
+            {
+                var MappedDiscount = _Mapper.Map<AddDiscountDTO, Discount>(discount);
+                _discounts.Add(MappedDiscount);
+                AddedResult = _unitOfWork.Commit();
+
+            }
+            return AddedResult;
         }
 
-        public void UpdateDiscount(Discount discount)
+        public int UpdateDiscount(DiscountDTO discount)
         {
-            _discounts.Update(discount);
-            _unitOfWork.Commit();
+            var OldDiscount = _discounts.GetByIdWithNoTracking(discount.Id);
+            int UpdateResult = -1;
+            if (OldDiscount is not null)
+            {
+                var NewDiscount = _Mapper.Map<DiscountDTO, Discount>(discount);
+                _discounts.Update(NewDiscount);
+                UpdateResult = _unitOfWork.Commit();
+            }
+            return UpdateResult;
         }
 
-        public void DeleteDiscount(int id)
+        public int DeleteDiscount(int id)
         {
             var discount = _discounts.GetById(id);
-            if (discount == null)
+            var DeleteResult = -1;
+            if (discount is not null)
             {
-                throw new ArgumentException($"Discount with ID {id} not found.");
+                _discounts.Delete(id);
+                DeleteResult = _unitOfWork.Commit();
+                return DeleteResult;
             }
-            _discounts.Delete(id);
-            _unitOfWork.Commit();
+            return DeleteResult;
         }
 
-        public void ApplyDiscountToProduct(int productId, int discountId)
+        public int ApplyDiscountToProduct(int productId, int discountId)
         {
             var product = _products.GetById(productId);
             var discount = _discounts.GetById(discountId);
-
-            if (product == null)
+            var AppliedDiscountResult = -1;
+            if (product is not null && discount is not null)
             {
-                throw new ArgumentException($"Product with ID {productId} not found.");
+                product.DiscountId = discountId;
+                product.Discount = discount;
+                product.Discounted = true;
+                _products.Update(product);
+                AppliedDiscountResult = _unitOfWork.Commit();
             }
-
-            if (discount == null)
-            {
-                throw new ArgumentException($"Discount with ID {discountId} not found.");
-            }
-
-            product.DiscountId = discountId;
-            product.Discount = discount;
-            _products.Update(product);
-            _unitOfWork.Commit();
+            return AppliedDiscountResult;
         }
     }
 }

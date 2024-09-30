@@ -1,4 +1,6 @@
-﻿using OnlineStore.Application.Interfaces;
+﻿using AutoMapper;
+using OnlineStore.Application.DTOs.User;
+using OnlineStore.Application.Interfaces;
 using OnlineStore.Service.Helper;
 using System;
 using System.Collections.Generic;
@@ -12,45 +14,31 @@ namespace OnlineStore.Application.Services
     {
         private UserManager<User> _userManager;
         private RoleManager<IdentityRole> _roleManager;
+        private readonly IOwnerRepository _ownerRepository;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public OwnerService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public OwnerService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager,IMapper mapper, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _ownerRepository = _unitOfWork.OwnerRepository();
+
         }
-        public IEnumerable<User> GetAllOwners()
+        public IList<UsersDTO> GetAllOwners()
         {
-            var owners = _userManager.Users.Where(u => _userManager.IsInRoleAsync(u, Roles.BrandOwner).Result).AsNoTracking().ToList();
-            return owners;
+            var owners = _userManager.GetUsersInRoleAsync(Roles.BrandOwner).Result;
+            if (owners is not null)
+            {
+               var OwnersMApping= _mapper.Map<IList<User>,IList<UsersDTO>>(owners);
+                return OwnersMApping;
+            }
+            return null;
         }
 
-        public void DemoteOwnerToCustomer(string ownerMail)
-        {
-            //var owner = _userManager.Users.FirstOrDefault(u=>u.Email == ownerMail);
-            var owner = _userManager.FindByEmailAsync(ownerMail).Result;
-            if (owner == null)
-            {
-                // Remove 'Owner' role and add 'Customer' role
-                var removeOwnerRole = _userManager.RemoveFromRoleAsync(owner, "Owner").Result;
-                if (removeOwnerRole.Succeeded)
-                {
-                    var addCustomerRole = _userManager.AddToRoleAsync(owner, "Customer").Result;
-                    if (!addCustomerRole.Succeeded)
-                    {
-                        throw new Exception("Failed to assign 'Customer' role to the user.");
-                    }
-                }
-                else
-                {
-                    throw new Exception("Failed to remove 'Owner' role from the user.");
-                }
-            }
-            else
-            {
-                throw new ArgumentException($"User with email {ownerMail} not found.");
-            }
-        }
-
+       
     }
 
 }

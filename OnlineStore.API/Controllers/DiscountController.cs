@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineStore.Application.DTOs;
+using OnlineStore.Application.DTOs.Discount;
 using OnlineStore.Application.Interfaces;
+using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.API.Controllers
 {
@@ -23,134 +24,99 @@ namespace OnlineStore.API.Controllers
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult GetAll()
         {
-            try
+            var discounts = _discountService.GetAllDiscounts();
+            if (discounts.Any())
             {
-                var discounts = _discountService.GetAllDiscounts();
-                var discountDTOs = _mapper.Map<IEnumerable<DiscountDTO>>(discounts);
+                return Ok(new GeneralResponse<IEnumerable<DiscountDTO>>(IsSuccess: true, "Discounts retrieved successfully", discounts));
+            }
+            return BadRequest(new GeneralResponse<string>(IsSuccess: true, "There's no Discounts yet"));
 
-                return Ok(new GeneralResponse<IEnumerable<DiscountDTO>>(
-                    IsSuccess: true,
-                    Message: "Discounts retrieved successfully",
-                    data: discountDTOs));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GeneralResponse<string>(
-                    IsSuccess: false,
-                    Message: $"Error retrieving discounts: {ex.Message}"));
-            }
         }
 
         [HttpGet("GetById/{id:int}")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult GetById(int id)
         {
-            try
-            {
-                var discount = _discountService.GetDiscountById(id);
-                var discountDTO = _mapper.Map<DiscountDTO>(discount);
 
-                return Ok(new GeneralResponse<DiscountDTO>(
-                    IsSuccess: true,
-                    Message: "Discount retrieved successfully",
-                    data: discountDTO));
-            }
-            catch (Exception ex)
+            var discount = _discountService.GetDiscountById(id);
+            if (discount is not null)
             {
-                return BadRequest(new GeneralResponse<string>(
-                    IsSuccess: false,
-                    Message: $"Error retrieving discount: {ex.Message}"));
+                return Ok(new GeneralResponse<DiscountDTO>(IsSuccess: true, "Discount retrieved successfully", discount));
             }
+
+            return BadRequest(new GeneralResponse<DiscountDTO>(false, "Sorry we cant't find this Discount"));
         }
 
         [HttpPost("Add")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
-        public IActionResult Add([FromBody] DiscountDTO discountDTO)
+        public IActionResult Add([FromBody] AddDiscountDTO discountDTO)
         {
-            try
+            var response = new GeneralResponse<AddDiscountDTO>(false, "Sorry, We can't Add This Discount", discountDTO);
+            if (ModelState.IsValid)
             {
-                var discount = _mapper.Map<Discount>(discountDTO);
-                _discountService.AddDiscount(discount);
 
-                return Ok(new GeneralResponse<string>(
-                    IsSuccess: true,
-                    Message: "Discount added successfully"));
+                int result = _discountService.AddDiscount(discountDTO);
+                if (result > 0)
+                {
+                    response.Success = true;
+                    response.Message = "Discount added successfully";
+                    return Ok(response);
+                }
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new GeneralResponse<string>(
-                    IsSuccess: false,
-                    Message: $"Error adding discount: {ex.Message}"));
-            }
+            return BadRequest(response);
+
         }
 
         [HttpPut("Update/{id:int}")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult Update(int id, [FromBody] DiscountDTO discountDTO)
         {
-            try
+            var result = 0;
+            var response = new GeneralResponse<DiscountDTO>(false, "Sorry, We can't Update This Discount", discountDTO);
+            if (ModelState.IsValid)
             {
-                var discount = _discountService.GetDiscountById(id);
-                if (discount == null)
+                result = _discountService.UpdateDiscount(discountDTO);
+                if (result > 0)
                 {
-                    return NotFound(new GeneralResponse<string>(
-                        IsSuccess: false,
-                        Message: "Discount not found"));
+                    response.Success = true;
+                    response.Message = "Discount updated successfully";
+                    return Ok(response);
                 }
-
-                _mapper.Map(discountDTO, discount);
-                _discountService.UpdateDiscount(discount);
-
-                return Ok(new GeneralResponse<string>(
-                    IsSuccess: true,
-                    Message: "Discount updated successfully"));
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new GeneralResponse<string>(
-                    IsSuccess: false,
-                    Message: $"Error updating discount: {ex.Message}"));
-            }
+            return BadRequest(response);
         }
 
         [HttpDelete("Delete/{id:int}")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult Delete(int id)
         {
-            try
+            var Result = 0;
+            var response = new GeneralResponse<string>(false, "Sorry, We can't Delete This Discount");
+            Result = _discountService.DeleteDiscount(id);
+            if (Result > 0)
             {
-                _discountService.DeleteDiscount(id);
-
-                return Ok(new GeneralResponse<string>(
-                    IsSuccess: true,
-                    Message: "Discount deleted successfully"));
+                response.Success = true;
+                response.Message = "Discount deleted successfully";
+                return Ok(response);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new GeneralResponse<string>(
-                    IsSuccess: false,
-                    Message: $"Error deleting discount: {ex.Message}"));
-            }
+            return BadRequest(response);
         }
 
         [HttpPost("ApplyDiscount")]
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.BrandOwner)]
         public IActionResult ApplyDiscountToProduct(int productId, int discountId)
         {
-            try
+            var response = new GeneralResponse<DiscountDTO>(false, "Sorry, We can't Apply This Discount");
+            var result = 0;
+            result = _discountService.ApplyDiscountToProduct(productId, discountId);
+            if (result > 0)
             {
-                _discountService.ApplyDiscountToProduct(productId, discountId);
+                response.Success=true;
+                response.Message = "Discount applied to product successfully";
+                return Ok(response);
+            }
+            return BadRequest(response);
 
-                return Ok(new GeneralResponse<string>(
-                    IsSuccess: true,
-                    Message: "Discount applied to product successfully"));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GeneralResponse<string>(
-                    IsSuccess: false,
-                    Message: $"Error applying discount to product: {ex.Message}"));
-            }
         }
     }
 }

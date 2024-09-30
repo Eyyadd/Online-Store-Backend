@@ -13,7 +13,7 @@ namespace OnlineStore.Application.Interfaces
         User GetUserByEmail(string email);
         IEnumerable<User> GetAllUsers();
         //void AssignRoleToUser(int userId, int roleId);
-        void AssignRoleToUser(string userEmail, string roleName);
+         Task AssignRoleToUser(string userEmail, string roleName);
 
       
 

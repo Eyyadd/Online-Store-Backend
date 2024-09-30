@@ -1,4 +1,5 @@
-﻿using OnlineStore.Domain.Specifications;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineStore.Domain.Specifications;
 using System.Linq.Expressions;
 
 namespace OnlineStore.Domain.Interfaces
@@ -20,10 +21,8 @@ namespace OnlineStore.Domain.Interfaces
         public Task<int> Delete(string SqlQuery, int CartId);
 
 
-        //public IQueryable<T> DynamicQuery(Expression<Func<T, bool>>? WherwCondition
-        //    ,Expression<Func<IQueryable<T> , IOrderedQueryable<T>>>?  Order
-        //    ,Expression<Func<IQueryable<T>, IQueryable<object>>>[] ? Includes
-        //    ,Expression<Func<IQueryable<T>, IQueryable<object>>>[]? ThenIncludes);
-
+        public T GetByIdWithNoTracking(int id);
+        public Category GetByNameWithNoTracking(string Name);
     }
+
 }

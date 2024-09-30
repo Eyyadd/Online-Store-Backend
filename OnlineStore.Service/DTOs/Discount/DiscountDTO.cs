@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineStore.Application.DTOs
+namespace OnlineStore.Application.DTOs.Discount
 {
     public class DiscountDTO
     {
@@ -24,11 +24,11 @@ namespace OnlineStore.Application.DTOs
         public decimal Percentage { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTime StartDiscount { get; set; }
 
         [Required]
-        public DateTime EndDate { get; set; }
+        public DateTime EndDiscount { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = false;
     }
 }

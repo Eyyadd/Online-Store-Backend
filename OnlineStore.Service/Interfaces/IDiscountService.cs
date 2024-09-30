@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineStore.Application.DTOs.Discount;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,13 @@ namespace OnlineStore.Application.Interfaces
 {
     public interface IDiscountService
     {
-        IEnumerable<Discount> GetAllDiscounts();
-        Discount GetDiscountById(int id);
-        void AddDiscount(Discount discount);
-        void UpdateDiscount(Discount discount);
-        void DeleteDiscount(int id);
+        IEnumerable<DiscountDTO> GetAllDiscounts();
+        DiscountDTO GetDiscountById(int id);
+        int AddDiscount(AddDiscountDTO discount);
+        int UpdateDiscount(DiscountDTO discount);
+        int DeleteDiscount(int id);
 
         // Method to apply a discount to a product
-        void ApplyDiscountToProduct(int productId, int discountId);
+        int ApplyDiscountToProduct(int productId, int discountId);
     }
 }

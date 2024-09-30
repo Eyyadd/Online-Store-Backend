@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OnlineStore.Application.DTOs.User;
 using OnlineStore.Application.Interfaces;
 
 namespace OnlineStore.API.Controllers
@@ -20,42 +21,16 @@ namespace OnlineStore.API.Controllers
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
         public IActionResult GetAllOwners()
         {
-            try
+            var response = new GeneralResponse<IEnumerable<UsersDTO>>(false, "No Owners yet", []);
+            var owners = _ownerService.GetAllOwners();
+            if (owners.Any())
             {
-                // Get all owners
-                var owners = _ownerService.GetAllOwners();
-
-                if (owners == null)
-                {
-                    return Ok(new GeneralResponse<string>(false, "No owners found."));
-                }
-
-                return Ok(new GeneralResponse<IEnumerable<User>>(true, "Owners retrieved successfully.", owners));
+                response.Success = true;
+                response.Message = "Owners Rterived Successfully";
+                response.Data = owners;
+                return Ok(response);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new GeneralResponse<string>(false, $"An error occurred while retrieving owners: {ex.Message}"));
-            }
-        }
-
-        [HttpPost("DemoteOwner")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
-        public IActionResult DemoteOwner(string ownerEmail)
-        {
-            try
-            {
-                _ownerService.DemoteOwnerToCustomer(ownerEmail);
-                return Ok(new GeneralResponse<string>(true, "Owner demoted to customer successfully."));
-            }
-            catch (ArgumentException ex)
-            {
-                // Handle case where the owner was not found
-                return BadRequest(new GeneralResponse<string>(false, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GeneralResponse<string>(false, $"An error occurred while demoting the owner: {ex.Message}"));
-            }
+            return BadRequest(response);
         }
     }
 }

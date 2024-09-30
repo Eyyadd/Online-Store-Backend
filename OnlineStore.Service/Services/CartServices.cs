@@ -24,8 +24,7 @@ namespace OnlineStore.Application.Services
         public IEnumerable<RetriveCartItemsDTO> AddToCart( CreateCartItemDTO cartItemsDTO , string userId)
         {
             var Item = _mapper.Map<CartItems>(cartItemsDTO);
-            var IsExisit = _unitOfWork.CartRepository().GetCartItem(cartItemsDTO.ProductVariantId, userId)
-                is not null ? true : false;
+            var IsExisit = _unitOfWork.CartRepository().GetCartItem(cartItemsDTO.ProductVariantId, userId) is not null ? true : false;
             
             if(!IsExisit)
             {
