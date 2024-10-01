@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Infrastrucutre.Repository
 {
-    public class ProductRepository : Repository<Product>, IProductRepository
+    public class ProductRepository : Repository<ProductVariant>, IProductRepository
     {
         
-        private readonly DbSet<Product> Products;
+        private readonly DbSet<ProductVariant> Products;
 
         public ProductRepository(OnlineStoreDbContext onlineStoreDbContext):base(onlineStoreDbContext)
         {
             Products = onlineStoreDbContext.Products;
         }
 
-        public IQueryable<Product> All()
+        public IQueryable<ProductVariant> All()
         {
             return Products.Include(p => p.ProductVariants)
                            .Include(p => p.SubCategory);
         }
 
-        public IEnumerable<Product> BestSeller(int size)
+        public IEnumerable<ProductVariant> BestSeller(int size)
         {
             var ProductVariants = Products.SelectMany(p => p.ProductVariants)
                                  .Include(p => p.Product)
@@ -42,14 +42,14 @@ namespace OnlineStore.Infrastrucutre.Repository
                 .Take(size);
         }
 
-        public IQueryable<Product> GetByCategoryID(int CategoryID)
+        public IQueryable<ProductVariant> GetByCategoryID(int CategoryID)
         {
             return Products.Where(p => p.SubCategoryId == CategoryID)
                 .Include(p => p.ProductVariants)
                 .Include(p => p.SubCategory);
         }
 
-        public IQueryable<Product> NewArrival(int size)
+        public IQueryable<ProductVariant> NewArrival(int size)
         {
            return Products.Where(p => p.ProductVariants.Any())
                 .Include(p => p.ProductVariants)
@@ -67,7 +67,7 @@ namespace OnlineStore.Infrastrucutre.Repository
         //    return Prod;
         //}
 
-        public Product ProductDetails(int ProductId)
+        public ProductVariant ProductDetails(int ProductId)
         {
             var Prod = Products.Where(p => p.Id == ProductId)
                     .Include(p => p.ProductVariants)
@@ -78,11 +78,17 @@ namespace OnlineStore.Infrastrucutre.Repository
 
 
 
-        public IQueryable<Product> ProductHaveSale()
+        public IQueryable<ProductVariant> ProductHaveSale()
         {
             return this.Products.Where(p => p.Discounted)
                 .Include(p => p.ProductVariants)
                 .Include(p => p.SubCategory);
+        }
+
+        public ProductVariants GetProductVariantByIdWithInclude(int ProductId)
+        {
+            var ProductV=_context.ProductVariants.Include(p=>p.Product).FirstOrDefault(p=>p.Id== ProductId);
+            return ProductV;
         }
     }
 }

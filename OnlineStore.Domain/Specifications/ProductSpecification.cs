@@ -7,25 +7,25 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Domain.Specifications
 {
-    public class ProductSpecification:BaseSpecification<Product>
+    public class ProductSpecification:BaseSpecification<ProductVariant>
     {
         public ProductSpecification():base()
         {
             Includes.Add(p => p.ProductVariants);
             Includes.Add(p => p.SubCategory);
         }
-        public ProductSpecification(Expression<Func<Product , bool>> expression)
+        public ProductSpecification(Expression<Func<ProductVariant , bool>> expression)
         {
             this.Filter = expression;
         }
 
-        public ProductSpecification(Expression<Func<Product, bool>> expression , List<Expression<Func<Product , Object>>> Includes)
+        public ProductSpecification(Expression<Func<ProductVariant, bool>> expression , List<Expression<Func<ProductVariant , Object>>> Includes)
         {
             this.Filter = expression;
             this.Includes = Includes;
         }
 
-        public ProductSpecification(List<Expression<Func<Product, Object>>> Includes)
+        public ProductSpecification(List<Expression<Func<ProductVariant, Object>>> Includes)
         {
             this.Includes = Includes;
         }

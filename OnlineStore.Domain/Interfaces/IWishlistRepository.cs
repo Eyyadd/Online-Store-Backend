@@ -13,5 +13,6 @@ namespace OnlineStore.Domain.Interfaces
         bool AddToWishlist(int productVariantId, string userId);
         Wishlist GetWishlistByUserID(string userid);
         ProductWishlist GetProductWishlist(int productVariantId, int WishlistID);
+        public IEnumerable<Wishlist> GetAllProductsfromWishlist(int wishlitID);
     }
 }

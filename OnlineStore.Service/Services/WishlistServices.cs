@@ -16,7 +16,7 @@ namespace OnlineStore.Infrastructure.Services
         IWishlistRepository wishlistRepository;
         IRepository<ProductVariants> productVariantRepository;
         IRepository<ProductWishlist> productWishlistRepository;
-        IRepository<Product> productRepository;
+        IRepository<ProductVariant> productRepository;
         private IMapper _mapper;
 
         public WishlistService(IUnitOfWork unitOfWork, IMapper mapper)
@@ -25,23 +25,23 @@ namespace OnlineStore.Infrastructure.Services
             wishlistRepository = _unitOfWork.WishlistRepository();
             productVariantRepository = _unitOfWork.Repository<ProductVariants>();
             productWishlistRepository = _unitOfWork.Repository<ProductWishlist>();
-            productRepository = _unitOfWork.Repository<Product>();
+            productRepository = _unitOfWork.Repository<ProductVariant>();
             _mapper = mapper;
         }
 
-        public ProductWishlist AddToWishlist(int productVariantId, string userId)
+        public bool AddToWishlist(int productVariantId, string userId)
         {
-            bool AddedDone = false;
+            bool Added=false;
             var productVariant = productVariantRepository.GetById(productVariantId);
             if (productVariant is null)
             {
-                return null;
+                return Added;
             }
 
             var wishlist = wishlistRepository.GetWishlistByUserID(userId);
-            if (wishlist.ProductVariants is not null && wishlist.ProductVariants.Any(pv => pv.Id == productVariantId))
+            if (wishlist.ProductVariants is null && wishlist.ProductVariants.Any(pv => pv.Id == productVariantId))
             {
-                return null;
+                return Added;
             }
 
             wishlist.ProductVariants?.Add(productVariant);
@@ -56,8 +56,8 @@ namespace OnlineStore.Infrastructure.Services
             productWishlistRepository.Add(productWishlist);
 
             _unitOfWork.Commit();
-
-            return productWishlist;
+            Added=true;
+            return Added;
         }
         public int RemoveFromWishlist(int productVariantId, string userId)
         {
@@ -75,8 +75,7 @@ namespace OnlineStore.Infrastructure.Services
 
         }
 
-        // لسة عاوزة تتهندل 
-        public List<ProductVariantWishlistDTO> GetWishlistProducts(string userId)
+        public IEnumerable<ProductElementDTO> GetWishlistProducts(string userId)
         {
             var wishlist = wishlistRepository.GetWishlistByUserID(userId);
 
@@ -84,34 +83,30 @@ namespace OnlineStore.Infrastructure.Services
             if (wishlist is not null)
             {
 
-                var wishlistProducts = productWishlistRepository
-                    .GetAll()
-                    .Where(pw => pw.wishlistId == wishlist.Id)
-                    .Join(
-                        productVariantRepository.GetAll(),
-                        pw => pw.ProductId,
-                        pv => pv.ProductId,
-                        (pw, pv) => new { pw, pv }
-                       )
-                    .Join(
-                        productRepository.GetAll(),
-                        joined => joined.pv.ProductId,
-                        p => p.Id,
-                        (joined, p) => new ProductVariantWishlistDTO
+                var wishlistProducts = wishlistRepository.GetAllProductsfromWishlist(wishlist.Id);
+                if (wishlistProducts is not null)
+                {
+                    
+                    var ListOfWishlistItems = new List<ProductElementDTO>();
+                    var WishlistItems = new ProductElementDTO();
+                    foreach (var product in wishlistProducts)
+                    {
+                        foreach (var p in product.ProductVariants)
                         {
-                            ProductVariantId = joined.pv.ProductId,
-                            Name = p.Name,
-                            Price = p.Price,
-                            Image = joined.pv.Image
+                            WishlistItems.price = p.Product.Price;
+                            WishlistItems.seller = p.Product.Seller;
+                            WishlistItems.Name = p.Product.Name;
+                            WishlistItems.ImageCover = p.Product.ImageCover;
+                            WishlistItems.CategoryName = p.Product.SubCategory.Name;
                         }
-                    ).ToList();
-
-                return wishlistProducts;
+                        ListOfWishlistItems.Add(WishlistItems);
+                    }
+                    return ListOfWishlistItems;
+                }
             }
             return [];
 
         }
-
         public CreatedWishlistDTO Create(string userId)
         {
             var CreatedResult = -1;
@@ -127,5 +122,7 @@ namespace OnlineStore.Infrastructure.Services
             }
             return null;
         }
+
+       
     }
 }

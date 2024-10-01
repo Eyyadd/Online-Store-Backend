@@ -151,31 +151,28 @@ namespace OnlineStore.API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> UpdatePassword(UpdatePasswordDTO updatePasswordDTO)
         {
+            var Response = new GeneralResponse<string>(false, "Sorry we can't Update password",updatePasswordDTO.UserName);
             var user = await _UserManager.FindByNameAsync(updatePasswordDTO.UserName);
-            if (user == null)
+            if (user is null)
             {
-                return NotFound("User not found.");
+                return BadRequest(Response);
             }
 
             var passwordValid = await _UserManager.CheckPasswordAsync(user, updatePasswordDTO.CurrentPassword);
             if (!passwordValid)
             {
-                return BadRequest("Current password is incorrect.");
+                Response.Message = "Current password is incorrect.";
+                return BadRequest(Response);
             }
 
             var changePasswordResult = await _UserManager.ChangePasswordAsync(user, updatePasswordDTO.CurrentPassword, updatePasswordDTO.NewPassword);
 
             if (changePasswordResult.Succeeded)
             {
-                return Ok("Password updated successfully.");
+                Response.Message = "Password updated successfully.";
+                return Ok(Response);
             }
-
-            foreach (var error in changePasswordResult.Errors)
-            {
-                ModelState.AddModelError(error.Code, error.Description);
-            }
-
-            return BadRequest(ModelState);
+            return BadRequest(Response);
         }
 
 

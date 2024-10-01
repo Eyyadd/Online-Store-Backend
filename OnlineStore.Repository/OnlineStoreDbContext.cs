@@ -9,7 +9,7 @@ namespace OnlineStore.Application
         {
             base.OnModelCreating(builder);
             new DiscountConfiguration().Configure(builder.Entity<Discount>());
-            new ProductConfiguration().Configure(builder.Entity<Product>());
+            new ProductConfiguration().Configure(builder.Entity<ProductVariant>());
             new CategoryConfiguration().Configure(builder.Entity<Category>());
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
@@ -21,7 +21,7 @@ namespace OnlineStore.Application
         public DbSet<Category> Categories { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Order> Order { get; set; }
-        public DbSet<Product> Products { get; set; }    
+        public DbSet<ProductVariant> Products { get; set; }    
         public DbSet<ProductVariants> ProductVariants { get; set; }
         public DbSet<ProductWishlist> ProductWishlist { get; set; }
         public DbSet<Review> Reviews { get; set; }

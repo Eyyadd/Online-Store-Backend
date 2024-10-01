@@ -13,14 +13,14 @@ namespace OnlineStore.Application.Services
     {
         private IUnitOfWork _unitOfWork;
         private IRepository<Discount> _discounts;
-        private IRepository<Product> _products;
+        private IRepository<ProductVariant> _products;
         private readonly IMapper _Mapper;
 
         public DiscountService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _discounts = _unitOfWork.Repository<Discount>();
-            _products = _unitOfWork.Repository<Product>();
+            _products = _unitOfWork.Repository<ProductVariant>();
             _Mapper = mapper;
         }
 

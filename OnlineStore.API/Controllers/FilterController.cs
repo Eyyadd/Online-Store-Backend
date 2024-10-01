@@ -18,7 +18,7 @@ namespace OnlineStore.API.Controllers
         }
 
         [HttpGet("FilterByPrice")]
-        public IActionResult FilterByPrice( decimal minPrice, decimal maxPrice)
+        public IActionResult FilterByPrice(decimal minPrice, decimal maxPrice)
         {
             var response = new GeneralResponse<IEnumerable<ProductDTO>>(false, "No filteration result", []);
             var products = _filterService.FilterByPrice(minPrice, maxPrice);
@@ -41,6 +41,40 @@ namespace OnlineStore.API.Controllers
             {
                 response.Success = true;
                 response.Message = "Filteration By Sale Successfully";
+                response.Data = products;
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        [HttpGet("FilterByMinPrice")]
+        public IActionResult FilterByMinPrice(decimal minPrice)
+        {
+            var response = new GeneralResponse<IEnumerable<ProductDTO>>(false, "No filtration result", Enumerable.Empty<ProductDTO>());
+
+            var products = _filterService.FilterByMinPrice(minPrice);
+
+            if (products.Any())
+            {
+                response.Success = true;
+                response.Message = "Filtration by Min Price Successfully";
+                response.Data = products;
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        [HttpGet("FilterByMaxPrice")]
+        public IActionResult FilterByMaxPrice(decimal maxPrice)
+        {
+            var response = new GeneralResponse<IEnumerable<ProductDTO>>(false, "No filtration result", Enumerable.Empty<ProductDTO>());
+
+            var products = _filterService.FilterByMaxPrice(maxPrice);
+
+            if (products.Any())
+            {
+                response.Success = true;
+                response.Message = "Filtration by MAx Price Successfully";
                 response.Data = products;
                 return Ok(response);
             }

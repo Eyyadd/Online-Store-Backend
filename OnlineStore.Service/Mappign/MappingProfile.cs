@@ -22,7 +22,7 @@ namespace OnlineStore.Application.Mappign
             CreateMap<Category, CategoriesDTO>().ReverseMap();
             CreateMap<IdentityRole, RolteDTO>().ReverseMap();
             CreateMap<Discount, DiscountDTO>().ReverseMap();
-            CreateMap<Product, ProductElementDTO>()
+            CreateMap<ProductVariant, ProductElementDTO>()
                 .ForMember(DTO => DTO.InStocke, OPT => OPT.MapFrom(src => src.ProductVariants.Where(v => v.Quantity > 0).Count() > 0))
                 .ForMember(DTO => DTO.CategoryName, opt => opt.MapFrom(src => src.SubCategory.Name))
                 .ForMember(DTO => DTO.ImageCover, opt => opt.MapFrom(src => src.ImageCover));
@@ -40,13 +40,13 @@ namespace OnlineStore.Application.Mappign
             CreateMap<CreateCartItemDTO, CartItems>()
                 .ForMember(cart => cart.ProductID, opt => opt.MapFrom(dto => dto.ProductVariantId))
                 .ForMember(cart => cart.Qunatity, opt => opt.MapFrom(dto => dto.CartQuantity))
-                .ForMember(cart => cart.CartId, opt => opt.MapFrom(dto => dto.CartId));
+                .ForMember(cart => cart.CartId, opt => opt.MapFrom(dto => dto.CartId))
                 .ForMember(cart => cart.Qunatity, opt => opt.MapFrom(dto => dto.CartQuantity));
                 
 
             CreateMap<UpdateCartItemDTO, CartItems>();
 
-            CreateMap<CreateProductDTO, Product>()
+            CreateMap<CreateProductDTO, ProductVariant>()
                 .ForMember(p => p.SubCategoryId, opt => opt.MapFrom(dto => dto.CategoryId));
 
             CreateMap<CategoriesDTO, Category>().ReverseMap();
@@ -75,7 +75,7 @@ namespace OnlineStore.Application.Mappign
                 .ForMember(dest => dest.IsActive,
                            src => src.MapFrom(src => src.EndDiscount > src.StartDiscount));
 
-            CreateMap<Product, ProductDTO>().ReverseMap();
+            CreateMap<ProductVariant, ProductDTO>().ReverseMap();
             CreateMap<User, UsersDTO>().ReverseMap();
             CreateMap<CreatedWishlistDTO, Wishlist>().ReverseMap();
             //.ForMember(dest => dest.Id, src => src.MapFrom(src => src.WishlistId))

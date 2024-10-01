@@ -40,8 +40,17 @@ namespace OnlineStore.Infrastrucutre.Repository
             return RowEffected;
         }
 
+        public Cart GetCartByIdWithInclude(int cartid)
+        {
+            var mycart = _context.Carts
+                .Include(c => c.Items)
+                .ThenInclude(c => c.ProductVariants)
+                .ThenInclude(c => c.Product)
+                .FirstOrDefault(c => c.Id == cartid);
+            return mycart;
+        }
 
-       public CartItems GetCartItem(int ProductId , string UserId)
+        public CartItems GetCartItem(int ProductId , string UserId)
         {
             return Carts.Where(c => c.UserId == UserId)
                         .SelectMany(c => c.Items)

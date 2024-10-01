@@ -8,7 +8,9 @@ namespace OnlineStore.Domain.Interfaces
 {
     public interface IFilterationRepository
     {
-        IEnumerable<Product> FilterByPrice(decimal minPrice, decimal maxPrice);
-        IEnumerable<Product> FilterBySale();
+        IEnumerable<ProductVariant> FilterByPrice(decimal minPrice, decimal maxPrice);
+        IEnumerable<ProductVariant> FilterBySale();
+        IEnumerable<ProductVariant> FilterByMinPrice(decimal minPrice);
+        IEnumerable<ProductVariant> FilterByMaxPrice(decimal maxPrice);
     }
 }
