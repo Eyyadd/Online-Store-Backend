@@ -23,6 +23,29 @@ namespace OnlineStore.Application.Services
             _Mapper = mapper;
         }
 
+        public IEnumerable<ProductDTO> FilterByMaxPrice(decimal maxPrice)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ProductDTO> FilterByMinPrice(decimal minPrice)
+        {
+            if (minPrice < 0)
+            {
+                return Enumerable.Empty<ProductDTO>();
+            }
+
+            var filteredProducts = _productRepository.FilterByMinPrice(minPrice);
+
+            if (filteredProducts.Any())
+            {
+                var filteredProductsMapping = _Mapper.Map<IEnumerable<ProductVariant>, IEnumerable<ProductDTO>>(filteredProducts);
+                return filteredProductsMapping;
+            }
+
+            return Enumerable.Empty<ProductDTO>();
+        }
+
         public IEnumerable<ProductDTO> FilterByPrice(decimal minPrice, decimal maxPrice)
         {
             if (minPrice < 0 || maxPrice < 0 || minPrice > maxPrice)

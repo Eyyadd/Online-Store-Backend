@@ -11,6 +11,8 @@ namespace OnlineStore.Application.Interfaces
     {
         IEnumerable<ProductDTO> FilterByPrice(decimal minPrice, decimal maxPrice);
         IEnumerable<ProductDTO> FilterBySale();
+        IEnumerable<ProductDTO> FilterByMinPrice(decimal minPrice);
+        IEnumerable<ProductDTO> FilterByMaxPrice(decimal maxPrice);
 
     }
 }
