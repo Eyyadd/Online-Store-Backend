@@ -1,6 +1,6 @@
 ﻿namespace OnlineStore.Domain.Entities
 {
-    public class Product:BaseEntity
+    public class ProductVariant:BaseEntity
     {
         [MaxLength(30)]
         public string Name { get; set; } = null!;

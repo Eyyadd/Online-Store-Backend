@@ -16,12 +16,12 @@ namespace OnlineStore.Infrastrucutre.Repository
             _dbContext = dbContext;
         }
 
-        public IEnumerable<Product> FilterByPrice(decimal minPrice, decimal maxPrice)
+        public IEnumerable<ProductVariant> FilterByPrice(decimal minPrice, decimal maxPrice)
         {
            return _dbContext.Products.Where(p => p.Price >= minPrice && p.Price <= maxPrice).ToList();
         }
 
-        public IEnumerable<Product> FilterBySale()
+        public IEnumerable<ProductVariant> FilterBySale()
         {
             return _dbContext.Products.Where(p => p.Discounted).ToList();
         }

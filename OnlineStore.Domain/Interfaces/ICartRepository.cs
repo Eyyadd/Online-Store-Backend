@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Domain.Interfaces
 {
-    public interface ICartRepository
+    public interface ICartRepository:IRepository<Cart>
     {
         IQueryable<CartItems> CartItems(string UserId);
         Cart Cart(string UserId);
@@ -14,5 +14,6 @@ namespace OnlineStore.Domain.Interfaces
         public Task<int> DeleteAllCartItems(int CartId);
 
         public CartItems GetCartItem(int ProductId, string UserId);
+        public Cart GetCartByIdWithInclude(int cartid);
     }
 }

@@ -4,7 +4,7 @@
     {
         [ForeignKey(nameof(Product))]
         public int ProductId {  get; set; }
-        public Product? Product { get; set; }    
+        public ProductVariant? Product { get; set; }    
         public Color Color { get; set; }
         public Size Size { get; set; }
         public int Quantity { get; set; }

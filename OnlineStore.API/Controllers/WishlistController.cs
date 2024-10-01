@@ -5,6 +5,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using OnlineStore.Application.DTOs.Wishlist;
 using OnlineStore.Application.DTOs;
+using OnlineStore.Application.DTOs.Products;
 
 namespace OnlineStore.API.Controllers
 {
@@ -23,10 +24,10 @@ namespace OnlineStore.API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult AddToWishlist(int ProductVariantId)
         {
-            var Response = new GeneralResponse<ProductWishlist>(false, "Sorry we can't Add this items");
+            var Response = new GeneralResponse<bool>(false, "Sorry we can't Add this items");
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var result = _wishlistService.AddToWishlist(ProductVariantId, userId);
-            if(result is not null)
+            if(result)
             {
                 Response.Success = true;
                 Response.Message = "Items Added Successfully";
@@ -57,7 +58,7 @@ namespace OnlineStore.API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult GetWishlist()
         {
-            var Response = new GeneralResponse<List<ProductVariantWishlistDTO>>(false, "Sorry we can't return this items", []);
+            var Response = new GeneralResponse<IEnumerable<ProductElementDTO>>(false, "Sorry we can't return this items", []);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var wishlist = _wishlistService.GetWishlistProducts(userId);
             if (wishlist.Any())

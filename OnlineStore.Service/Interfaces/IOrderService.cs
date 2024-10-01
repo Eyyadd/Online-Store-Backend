@@ -10,5 +10,6 @@ namespace OnlineStore.Application.Interfaces
     public interface IOrderService
     {
         IEnumerable<GetOrderItems> GetOrdersByUserID(string UserId);
+        Order CreateOrder(int CartId);
     }
 }

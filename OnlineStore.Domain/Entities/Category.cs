@@ -10,7 +10,7 @@ namespace OnlineStore.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
         public CategoryType CategoryType { get; set; }
 
-        public ICollection<Product>? Products { get; set; }
+        public ICollection<ProductVariant>? Products { get; set; }
 
     }
 }

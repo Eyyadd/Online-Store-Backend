@@ -51,7 +51,7 @@ namespace OnlineStore.Infrastrucutre.Repository
             Wishlist resultWishlist = new Wishlist();
             if (isUserExist is not null)
             {
-                var wishlist=_context.Wishlist.FirstOrDefault(wishlist=>wishlist.UserId == userId);
+                var wishlist=_context.Wishlist.Include(w=>w.ProductVariants).ThenInclude(w=>w.Product).FirstOrDefault(wishlist=>wishlist.UserId == userId);
                 if (wishlist is not null)
                 {
                     resultWishlist = wishlist;
@@ -63,6 +63,18 @@ namespace OnlineStore.Infrastrucutre.Repository
         public ProductWishlist GetProductWishlist(int productVariantId, int WishlistID)
         {
             return _context.ProductWishlist.FirstOrDefault(pw => pw.ProductId == productVariantId && pw.wishlistId == WishlistID);
+        }
+
+        public IEnumerable<Wishlist> GetAllProductsfromWishlist(int wishlitID)
+        {
+            var wishlistProducts = _context.Wishlist
+                .Include(w => w.ProductVariants)
+                .ThenInclude(w => w.Product).
+                ThenInclude(w=>w.SubCategory)
+                .Where(w => w.Id == wishlitID).ToList();
+
+            return wishlistProducts;
+
         }
     }
 }

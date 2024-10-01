@@ -18,7 +18,7 @@ namespace OnlineStore.API.Controllers
         }
 
         [HttpGet("FilterByPrice")]
-        public IActionResult FilterByPrice( decimal minPrice, decimal maxPrice)
+        public IActionResult FilterByPrice(decimal minPrice, decimal maxPrice)
         {
             var response = new GeneralResponse<IEnumerable<ProductDTO>>(false, "No filteration result", []);
             var products = _filterService.FilterByPrice(minPrice, maxPrice);
@@ -46,5 +46,7 @@ namespace OnlineStore.API.Controllers
             }
             return BadRequest(response);
         }
+
+      
     }
 }

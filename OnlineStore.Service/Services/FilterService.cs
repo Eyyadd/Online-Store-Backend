@@ -32,7 +32,7 @@ namespace OnlineStore.Application.Services
             var FilteredProducts = _productRepository.FilterByPrice(minPrice, maxPrice);
             if (FilteredProducts.Any())
             {
-                var FilteredProductsMapping = _Mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(FilteredProducts);
+                var FilteredProductsMapping = _Mapper.Map<IEnumerable<ProductVariant>, IEnumerable<ProductDTO>>(FilteredProducts);
                 return FilteredProductsMapping;
             }
             return Enumerable.Empty<ProductDTO>();
@@ -45,11 +45,14 @@ namespace OnlineStore.Application.Services
             var FilteredProducts = _productRepository.FilterBySale();
             if (FilteredProducts.Any())
             {
-                var FilteredProductsMapping = _Mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(FilteredProducts);
+                var FilteredProductsMapping = _Mapper.Map<IEnumerable<ProductVariant>, IEnumerable<ProductDTO>>(FilteredProducts);
                 return FilteredProductsMapping;
             }
             return Enumerable.Empty<ProductDTO>();
 
         }
+
+       
+       
     }
 }

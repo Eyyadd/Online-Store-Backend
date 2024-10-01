@@ -10,5 +10,6 @@ namespace OnlineStore.Application.DTOs.Cart
     {
         public int ProductVariantId { get; set; }
         public int CartQuantity { get; set; }
+        public int CartId {  get; set; }
     }
 }

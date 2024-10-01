@@ -18,12 +18,12 @@ namespace OnlineStore.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes ="Bearer")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult GetOrders()
         {
             var response = new GeneralResponse<IEnumerable<GetOrderItems>>(false, "No orders placed yet");
             var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var orders=_OrderService.GetOrdersByUserID(user);
+            var orders = _OrderService.GetOrdersByUserID(user);
             if (orders is not null)
             {
                 response.Success = true;
@@ -34,4 +34,5 @@ namespace OnlineStore.API.Controllers
             return BadRequest(response);
         }
     }
+
 }

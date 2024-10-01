@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OnlineStore.Application.Interfaces;
 using OnlineStore.Application.Services;
 using OnlineStore.Infrastructure.Services;
+using OnlineStore.Infrastrucutre.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,8 @@ namespace OnlineStore.Service.Services
             service.AddScoped<IWishlistService, WishlistService>();
             service.AddScoped<IReviewService, ReviewService>();
             service.AddScoped<IOrderService,OrderService>();
+            service.AddScoped<IPaymentService,PaymentService>();
+            service.AddScoped<ICartRepository,CartRepository>();
 
         }
     }

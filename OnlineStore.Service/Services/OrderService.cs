@@ -18,9 +18,34 @@ namespace OnlineStore.Application.Services
             _orderRepository = _unitOfWork.OrderRepository();
         }
 
+        public Order CreateOrder(int CartId)
+        {
+            var cart=_unitOfWork.CartRepository().GetCartByIdWithInclude(CartId);
 
+            var orderItems=new List<OrderItems>();
+            if (cart.Items.Any())
+            {
+                foreach (var item in cart.Items)
+                {
+                    var orderItem = new OrderItems()
+                    {
+                        Quantity = item.Qunatity,
+                        ProductId = item.ProductID,
+                    };
+                    orderItems.Add(orderItem);
+                }
+            }
+            var totalPrice = orderItems.Sum(x => x.Product.Product.Price);
+            var order = new Order()
+            {
+                Items = orderItems,
+                Address = "Maddi",
+                IsPaid = false,
+                UserId = cart.UserId
+            };
+            return order;
+        }
 
-        
         public IEnumerable<GetOrderItems> GetOrdersByUserID(string UserId)
         {
             var orders = _orderRepository.GetOrdersbyUserId(UserId);
