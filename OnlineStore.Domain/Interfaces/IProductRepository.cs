@@ -15,5 +15,7 @@ namespace OnlineStore.Domain.Interfaces
         IEnumerable<ProductVariant> BestSeller(int size);
         ProductVariant ProductDetails(int ProductId);
         public ProductVariants GetProductVariantByIdWithInclude(int ProductId);
+        IEnumerable<ProductVariant> ProductByCategoryType(string categoryType);
+
     }
 }

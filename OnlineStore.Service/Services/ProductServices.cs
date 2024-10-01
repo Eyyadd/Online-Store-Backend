@@ -114,8 +114,19 @@ namespace OnlineStore.Application.Services
 
         }
 
-     
 
-       
+        public IEnumerable<ProductElementDTO> GetByCategoryType(string categoryType)
+        {
+            var Result = _unitOfWork.ProductRepository().ProductByCategoryType(categoryType);
+            if (Result is not null)
+            {
+                return _mapper.Map<IEnumerable<ProductElementDTO>>(Result);
+            }
+            return new List<ProductElementDTO>();
+        }
+
+
+
+
     }
 }

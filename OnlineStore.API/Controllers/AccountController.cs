@@ -46,12 +46,14 @@ namespace OnlineStore.API.Controllers
             if (User is not null)
                 return Response;
 
-            User = await _UserManager.FindByNameAsync(user.Name);
+            User = await _UserManager.FindByNameAsync(user.UserName);
             if (User is not null)
                 return Response;
             User = new User()
             {
-                UserName = user.Name,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber
             };
@@ -62,17 +64,17 @@ namespace OnlineStore.API.Controllers
                 User.CartId = cart.Id;
                 _UserManager.UpdateAsync(User);
                 Response.Success = true;
-                Response.Data = "Check Email For Confirmation";
+                Response.Data = "Register Successfully";
                 Response.Message = null;
-                var token = await _UserManager.GenerateEmailConfirmationTokenAsync(User);
-                var confirmationLink = $"{_Configuration["BaseURL"]}/api/Account/ConfirmEmail?Email={User.Email}&token={token}";
-                Email email = new Email()
-                {
-                    To = User.Email,
-                    Subject = "Confirm your email",
-                    Body = $"Please confirm your account by clicking this link: <a href='{confirmationLink}'>Confirm Email</a>"
-            };
-                await this.sendEmailService.SendEmailAsync(email);
+            //    var token = await _UserManager.GenerateEmailConfirmationTokenAsync(User);
+            //    var confirmationLink = $"{_Configuration["BaseURL"]}/api/Account/ConfirmEmail?Email={User.Email}&token={token}";
+            //    Email email = new Email()
+            //    {
+            //        To = User.Email,
+            //        Subject = "Confirm your email",
+            //        Body = $"Please confirm your account by clicking this link: <a href='{confirmationLink}'>Confirm Email</a>"
+            //};
+            //    await this.sendEmailService.SendEmailAsync(email);
             }
            
             return Response;

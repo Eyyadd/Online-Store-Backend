@@ -26,6 +26,8 @@ namespace OnlineStore.Application.Interfaces
         public IEnumerable<ProductElementDTO> SaleProducts();
 
         public IEnumerable<string> ProuctsSaller();
-       
+
+        public IEnumerable<ProductElementDTO> GetByCategoryType(string categoryType);
+
     }
 }

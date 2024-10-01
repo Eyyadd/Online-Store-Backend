@@ -9,7 +9,15 @@ namespace OnlineStore.Service.DTOs
 {
     public class RegisterUserDTO
     {
-        public string Name { get; set; }
+        [Required]
+        [MinLength(3)]
+        public string FirstName { get; set; }
+        [Required]
+        [MinLength(3)]
+        public string LastName { get; set; }
+        [Required]
+        [MinLength(3)]
+        public string UserName { get; set; }
         [EmailAddress]
         public string Email { get; set; }
         [RegularExpression(@"^(?!\s*$)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",

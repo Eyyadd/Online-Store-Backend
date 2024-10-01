@@ -1,5 +1,6 @@
 ﻿using OnlineStore.Application;
 using OnlineStore.Application.Repository;
+using OnlineStore.Domain.Utilities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,5 +91,15 @@ namespace OnlineStore.Infrastrucutre.Repository
             var ProductV=_context.ProductVariants.Include(p=>p.Product).FirstOrDefault(p=>p.Id== ProductId);
             return ProductV;
         }
+        public IEnumerable<ProductVariant> ProductByCategoryType(string inputCategoryType)
+        {
+            var categoryType = (CategoryType)Enum.Parse(typeof(CategoryType), inputCategoryType, true);
+
+            return this.Products.Include(p => p.SubCategory)
+                        .Where(p => p.SubCategory.CategoryType == categoryType)
+                        .Include(p => p.ProductVariants);
+        }
+
+
     }
 }

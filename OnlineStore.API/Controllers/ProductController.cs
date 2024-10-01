@@ -126,6 +126,12 @@ namespace OnlineStore.API.Controllers
             return new GeneralResponse<IEnumerable<ProductElementDTO>>(true, "", Result);
         }
 
+        [HttpGet("GetByCategoryType")]
+        public GeneralResponse<IEnumerable<ProductElementDTO>> GetByCategoryType(string categoryType)
+        {
+            var Result = _productServices.GetByCategoryType(categoryType);
+            return new GeneralResponse<IEnumerable<ProductElementDTO>>(true, "", Result);
+        }
 
 
     }
