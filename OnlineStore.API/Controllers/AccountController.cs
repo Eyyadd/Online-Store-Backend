@@ -21,12 +21,14 @@ namespace OnlineStore.API.Controllers
         private readonly ISendEmail sendEmailService;
         private readonly ICartServices _cartServices;
         private readonly IUserService _userService;
+        private readonly IWishlistService _wishlistService;
 
         public AccountController(UserManager<User> userManager
             ,IConfiguration configuration, IMapper mapper
             ,ISendEmail sendEmailService
             ,ICartServices cartServices
-            ,IUserService userService)
+            ,IUserService userService
+            ,IWishlistService wishlistService)
         {
             _UserManager = userManager;
             _Configuration = configuration;
@@ -34,6 +36,7 @@ namespace OnlineStore.API.Controllers
             this.sendEmailService = sendEmailService;
             _cartServices = cartServices;
             _userService = userService;
+            _wishlistService = wishlistService;
         }
 
         [HttpPost("Register")]
@@ -60,9 +63,12 @@ namespace OnlineStore.API.Controllers
             var Result = await _UserManager.CreateAsync(User, user.Password);
             if(Result.Succeeded)
             {
+                
                 Cart cart =_cartServices.CreateCart(User);
+                var wishlist = _wishlistService.Create(User.Id);
                 User.CartId = cart.Id;
-                _UserManager.UpdateAsync(User);
+                User.WishlistId = wishlist.Id;
+                var UpdatedResult = await _UserManager.UpdateAsync(User);
                 Response.Success = true;
                 Response.Data = "Register Successfully";
                 Response.Message = null;
