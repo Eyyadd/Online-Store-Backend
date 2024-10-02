@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OnlineStore.Application.DTOs;
 using OnlineStore.Application.DTOs.Products;
 using OnlineStore.Application.Helper;
 using OnlineStore.Application.Interfaces;
@@ -27,20 +28,20 @@ namespace OnlineStore.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<GeneralResponse<List<ProductElementDTO>>> All()
+        public async Task<GeneralResponse<PaginationDTO<ProductElementDTO>>> All(int pageSize , int pageIndex)
         {
             //try
             //{
-                var products = _productServices.AllProducts().ToList();
+                var products =await  _productServices.AllProducts(pageSize , pageIndex);
 
-                if (products == null || products.Count == 0)
+                if (products == null || products.Items.Count() == 0)
                 {
                     var notFoundResponse = new GeneralResponse<List<ProductElementDTO>>(false, "No products found");
-                    return NotFound(notFoundResponse);
+                return new GeneralResponse<PaginationDTO<ProductElementDTO>>(false , "There Are Not Products");
                 }
 
-                var response = new GeneralResponse<List<ProductElementDTO>>(true, "Products retrieved successfully", products);
-                return Ok(response);
+                var response = new GeneralResponse<PaginationDTO<ProductElementDTO>>(true, "Products retrieved successfully", products);
+                return response;
             //}
             //catch (Exception ex)
             //{

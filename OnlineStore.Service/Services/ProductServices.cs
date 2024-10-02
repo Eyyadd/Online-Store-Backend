@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using OnlineStore.Application.DTOs;
 using OnlineStore.Application.DTOs.Products;
+using OnlineStore.Application.Helper;
 using OnlineStore.Application.Interfaces;
 using OnlineStore.Application.Mappign;
 using OnlineStore.Domain.Specifications;
@@ -25,10 +27,20 @@ namespace OnlineStore.Application.Services
             _mapper = mapper;
         }
 
-        public IEnumerable<ProductElementDTO> AllProducts()
+        public async Task<PaginationDTO<ProductElementDTO>> AllProducts(int PageSize , int PageIndex)
         {
             var Products = _unitOfWork.ProductRepository().All();
-            return _mapper.Map<IEnumerable<ProductElementDTO>>(Products);
+            var PaginationResult = await Products.Paginate(PageSize, PageIndex);
+            var MapperPages = _mapper.Map<IEnumerable<ProductElementDTO>>(PaginationResult.Items);
+
+            return new PaginationDTO<ProductElementDTO>
+            {
+                Index = PaginationResult.Index,
+                Size = PaginationResult.Size,
+                Recordes = PaginationResult.Recordes,
+                NoOfPages = PaginationResult.NoOfPages,
+                Items = MapperPages
+            };
         }
 
         public IEnumerable<ProductVariantDTO> AllProductsVariants()

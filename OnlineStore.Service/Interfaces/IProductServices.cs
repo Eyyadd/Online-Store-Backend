@@ -1,4 +1,5 @@
-﻿using OnlineStore.Application.DTOs.Products;
+﻿using OnlineStore.Application.DTOs;
+using OnlineStore.Application.DTOs.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace OnlineStore.Application.Interfaces
 {
     public interface IProductServices
     {
-        public IEnumerable<ProductElementDTO> AllProducts();
+        public Task<PaginationDTO<ProductElementDTO>> AllProducts(int PageSize, int PageIndex);
 
         public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO , string ImagePath);
 
