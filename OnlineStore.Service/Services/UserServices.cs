@@ -36,7 +36,11 @@ namespace OnlineStore.Application.Services
             var user = _userManager.FindByEmailAsync(userEmail).Result;
             if (user != null)
             {
-                await _userManager.AddToRoleAsync(user, roleName);
+                var role = _roleManager.FindByNameAsync(roleName).Result;
+                if (role is not null)
+                {
+                    var added= _userManager.AddToRoleAsync(user, roleName).Result;
+                }
             }
         }
 

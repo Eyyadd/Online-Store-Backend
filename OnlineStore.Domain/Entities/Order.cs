@@ -11,7 +11,5 @@
         public string UserId { get; set; } = null!;
 
         public ICollection<OrderItems>? Items { get; set; }
-
-
     }
 }

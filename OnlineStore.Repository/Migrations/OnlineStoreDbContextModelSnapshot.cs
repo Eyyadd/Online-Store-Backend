@@ -258,7 +258,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ads");
+                    b.ToTable("Ads", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.BestSeller", b =>
@@ -296,7 +296,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BestSellers");
+                    b.ToTable("BestSellers", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.Cart", b =>
@@ -324,7 +324,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.CartItems", b =>
@@ -351,7 +351,7 @@ namespace OnlineStore.Repository.Migrations
                     b.HasIndex("ProductID")
                         .IsUnique();
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.Category", b =>
@@ -381,7 +381,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.Discount", b =>
@@ -414,7 +414,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Discounts");
+                    b.ToTable("Discounts", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.Order", b =>
@@ -444,7 +444,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.OrderItems", b =>
@@ -470,7 +470,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("orderId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.ProductVariant", b =>
@@ -513,7 +513,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("SubCategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.ProductVariants", b =>
@@ -559,7 +559,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductVariants");
+                    b.ToTable("ProductVariants", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.ProductWishlist", b =>
@@ -582,7 +582,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("wishlistId");
 
-                    b.ToTable("ProductWishlist");
+                    b.ToTable("ProductWishlist", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.Review", b =>
@@ -612,7 +612,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.Wishlist", b =>
@@ -631,7 +631,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Wishlist");
+                    b.ToTable("Wishlist", (string)null);
                 });
 
             modelBuilder.Entity("ProductVariantsWishlist", b =>
@@ -646,7 +646,7 @@ namespace OnlineStore.Repository.Migrations
 
                     b.HasIndex("WishlistId");
 
-                    b.ToTable("ProductVariantsWishlist");
+                    b.ToTable("ProductVariantsWishlist", (string)null);
                 });
 
             modelBuilder.Entity("OnlineStore.Domain.Entities.User", b =>

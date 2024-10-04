@@ -28,6 +28,7 @@ namespace OnlineStore.Application.Services
         public Cart CreatePaymentIntent(int CartID)
         {
             StripeConfiguration.ApiKey = _configuration["stripe:Secretkey"];
+            
 
             var myCart = _CartRepository.GetCartByIdWithInclude(CartID);
             var ShipmentCost = 50;

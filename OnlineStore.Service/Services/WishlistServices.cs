@@ -114,9 +114,10 @@ namespace OnlineStore.Infrastructure.Services
             if (IsCreated is not null)
             {
                 CreatedResult = _unitOfWork.Commit();
+               var wis= _unitOfWork.WishlistRepository().GetWishlistByUserID(userId);
                 if (CreatedResult > 0)
                 {
-                    var Wishlistmapping = _mapper.Map<Wishlist, CreatedWishlistDTO>(IsCreated);
+                    var Wishlistmapping = _mapper.Map<Wishlist, CreatedWishlistDTO>(wis);
                     return Wishlistmapping;
                 }
             }

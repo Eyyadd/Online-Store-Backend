@@ -52,8 +52,8 @@ namespace OnlineStore.API.Controllers
             return new GeneralResponse<IEnumerable<RetriveCartItemsDTO>>(true, "", Result);
         }
 
-        [HttpDelete("DeleteCartItem")]
-        public GeneralResponse<IEnumerable<RetriveCartItemsDTO>> updateCartItem([FromBody]int cartItemId)
+        [HttpDelete("DeleteCartItem/{cartItemId}")]
+        public GeneralResponse<IEnumerable<RetriveCartItemsDTO>> deleteCartItem([FromQuery]int cartItemId)
         {
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var Result = _cartServices.RemoveItemFromCart(cartItemId ,UserId);

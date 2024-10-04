@@ -22,6 +22,14 @@ namespace OnlineStore.Infrastrucutre.Repository
             return orders;
         }
 
+        public bool GetOrderWithPaymetntIntent(string PaymetntIntent)
+        {
+            throw new NotImplementedException();
+        }
 
+        //public bool GetOrderWithPaymetntIntent(string PaymetntIntent)
+        //{
+        //    return _context.Order.Any(p=>p.PaymentIntentId == PaymetntIntent);
+        //}
     }
 }

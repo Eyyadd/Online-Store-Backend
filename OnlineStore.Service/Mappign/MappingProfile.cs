@@ -83,6 +83,8 @@ namespace OnlineStore.Application.Mappign
             //CreateMap<Wishlist, CreatedWishlistDTO>()
             //    .ForMember(dest => dest.WishlistId, src => src.MapFrom(src => src.Id));
             CreateMap<AddReview, Review>().ReverseMap();
+
+            CreateMap<CreateProductVariantDTO, ProductVariants>().ReverseMap();
         }
     }
 }

@@ -101,5 +101,13 @@ namespace OnlineStore.Infrastrucutre.Repository
         }
 
 
+        public ProductVariants AddProductVarant(ProductVariants productVariant)
+        {
+           var Entity =  _context.ProductVariants.Add(productVariant);
+            return Entity != null? Entity.Entity: new ProductVariants();
+           
+        }
+
+
     }
 }

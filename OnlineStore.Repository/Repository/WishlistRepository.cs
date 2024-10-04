@@ -28,11 +28,11 @@ namespace OnlineStore.Infrastrucutre.Repository
             var Wishlist = new Wishlist();
             if (isUserExist is not null)
             {
-                
-                Add(new Wishlist
+                var AddedWishllis = new Wishlist
                 {
                     UserId = userId
-                });
+                };
+                Add(AddedWishllis);
                 Wishlist = GetWishlistByUserID(userId);
                 Created= true;
             }

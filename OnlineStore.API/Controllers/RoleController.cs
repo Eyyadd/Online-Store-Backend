@@ -60,7 +60,7 @@ namespace OnlineStore.API.Controllers
                     return NotFound(new GeneralResponse<string>(false, $"No role found with name: {roleName}"));
                 }
 
-                _userServices.AssignRoleToUser(userEmail, roleName);
+                var x=_userServices.AssignRoleToUser(userEmail, roleName);
                 return Ok(new GeneralResponse<string>(true, "Role assigned to user successfully"));
             
         }

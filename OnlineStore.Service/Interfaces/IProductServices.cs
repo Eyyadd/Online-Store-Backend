@@ -12,7 +12,7 @@ namespace OnlineStore.Application.Interfaces
     {
         public Task<PaginationDTO<ProductElementDTO>> AllProducts(int PageSize, int PageIndex);
 
-        public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO , string ImagePath);
+        public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO);
 
         public IEnumerable<ProductVariantDTO> AllProductsVariants();
         public ProductDetailsDTO ProductDetails(int id);
@@ -29,6 +29,8 @@ namespace OnlineStore.Application.Interfaces
         public IEnumerable<string> ProuctsSaller();
 
         public IEnumerable<ProductElementDTO> GetByCategoryType(string categoryType);
+
+        public CreateProductVariantDTO CreateProductVariant(CreateProductVariantDTO productVariantDTO);
 
     }
 }

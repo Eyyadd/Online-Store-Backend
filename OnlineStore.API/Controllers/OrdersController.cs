@@ -12,9 +12,11 @@ namespace OnlineStore.API.Controllers
     public class OrdersController : ControllerBase
     {
         public IOrderService _OrderService { get; set; }
-        public OrdersController(IOrderService ownerService)
+        public UserManager<User> _UserManager { get; set; }
+        public OrdersController(IOrderService ownerService,UserManager<User> userManager)
         {
             this._OrderService = ownerService;
+            this._UserManager = userManager;
         }
 
         [HttpGet]
@@ -33,6 +35,24 @@ namespace OnlineStore.API.Controllers
             }
             return BadRequest(response);
         }
-    }
 
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> CreateOrderAsync()
+        {
+            var carId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+            User user=await _UserManager.FindByIdAsync(carId);
+            if (user.CartId is not null)
+            {
+                int crt = (int)user.CartId;
+                var orderService = _OrderService.CreateOrder(crt);
+                if (orderService is not null)
+                {
+                    return Ok(orderService);
+                }
+            }
+            return BadRequest();
+        }
+
+    }
 }

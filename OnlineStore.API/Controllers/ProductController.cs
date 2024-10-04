@@ -98,8 +98,8 @@ namespace OnlineStore.API.Controllers
         [HttpPost("Create")]
         public async Task<GeneralResponse<ProductElementDTO>> Add(CreateProductDTO createProductDTO )
         {
-            var ImagePathToRestor = await ImageUpload.UploadImageAsync(createProductDTO.ImageCover);
-            var Result =  _productServices.CreateProduct(createProductDTO , ImagePathToRestor);
+            
+            var Result =  _productServices.CreateProduct(createProductDTO );
             return new GeneralResponse<ProductElementDTO>(true, "", Result);
 
         }
@@ -133,6 +133,38 @@ namespace OnlineStore.API.Controllers
             var Result = _productServices.GetByCategoryType(categoryType);
             return new GeneralResponse<IEnumerable<ProductElementDTO>>(true, "", Result);
         }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload([FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            // Set a path to save the file (e.g., "wwwroot/images")
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", file.FileName);
+
+            // Save the file
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            var Result = Path.Combine("https://localhost:44322/", "wwwroot/images", file.FileName);
+            return Ok(new { message = "File uploaded successfully", filePath = Result });
+        }
+
+
+
+        [HttpPost("CreateProductVariant")]
+        public GeneralResponse<CreateProductVariantDTO> CreateProductVariant(CreateProductVariantDTO createProductVariantDTO)
+        {
+            var Result = _productServices.CreateProductVariant(createProductVariantDTO);
+            if(Result is not null)
+            {
+                return new GeneralResponse<CreateProductVariantDTO>(true, "", Result);
+            }
+            return new GeneralResponse<CreateProductVariantDTO>(false, "Something Went Wrong");
+        }
+
 
 
     }

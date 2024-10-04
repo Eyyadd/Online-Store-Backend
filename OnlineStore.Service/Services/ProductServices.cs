@@ -56,10 +56,9 @@ namespace OnlineStore.Application.Services
             return _mapper.Map<IEnumerable<ProductElementDTO>>(Products);
         }
 
-        public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO , string ImagePath)
+        public ProductElementDTO CreateProduct(CreateProductDTO createProductDTO )
         {
             var Proudct = _mapper.Map<ProductVariant>(createProductDTO);
-            Proudct.ImageCover = ImagePath;
             _unitOfWork.Repository<ProductVariant>().Add(Proudct);
             _unitOfWork.Commit();
             return _mapper.Map<ProductElementDTO>(Proudct);
@@ -137,8 +136,14 @@ namespace OnlineStore.Application.Services
             return new List<ProductElementDTO>();
         }
 
-
-
-
+        public CreateProductVariantDTO CreateProductVariant(CreateProductVariantDTO productVariantDTO)
+        {
+            var ProductVariant = _mapper.Map<ProductVariants>(productVariantDTO);
+            if(ProductVariant is not null)
+            {
+                return _mapper.Map<CreateProductVariantDTO>(ProductVariant);
+            }
+            return new CreateProductVariantDTO();
+        }
     }
 }

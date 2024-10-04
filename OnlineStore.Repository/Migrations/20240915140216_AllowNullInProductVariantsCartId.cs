@@ -53,7 +53,7 @@ namespace OnlineStore.Repository.Migrations
                 column: "CartItemsId",
                 principalTable: "CartItems",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
     }
 }

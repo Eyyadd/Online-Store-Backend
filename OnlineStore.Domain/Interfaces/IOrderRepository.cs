@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Domain.Interfaces
 {
-    public interface IOrderRepository
+    public interface IOrderRepository:IRepository<Order>
     {
        
         IEnumerable<Order> GetOrdersbyUserId(string UserId);
+        bool GetOrderWithPaymetntIntent(string PaymetntIntent);
     }
 }

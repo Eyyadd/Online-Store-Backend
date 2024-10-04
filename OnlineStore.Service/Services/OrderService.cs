@@ -1,5 +1,6 @@
 ﻿using OnlineStore.Application.DTOs.Order;
 using OnlineStore.Application.Interfaces;
+using OnlineStore.Domain.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,18 +32,30 @@ namespace OnlineStore.Application.Services
                     {
                         Quantity = item.Qunatity,
                         ProductId = item.ProductID,
+                        Product = item.ProductVariants
                     };
                     orderItems.Add(orderItem);
                 }
             }
             var totalPrice = orderItems.Sum(x => x.Product.Product.Price);
+
+            //var spec = new OrderSpecification(cart.PaymentIntentId);
+            //var existingORder= _orderRepository.GetAllWithSpec(spec).FirstOrDefault();
+            //if (existingORder is not null)
+            //{
+            //    _orderRepository.Delete(existingORder.Id);
+            //}
             var order = new Order()
             {
                 Items = orderItems,
                 Address = "Maddi",
                 IsPaid = false,
-                UserId = cart.UserId
+                UserId = cart.UserId,
+               
             };
+
+            _unitOfWork.OrderRepository().Add(order);
+            _unitOfWork.Commit();
             return order;
         }
 

@@ -16,6 +16,7 @@ namespace OnlineStore.Domain.Interfaces
         ProductVariant ProductDetails(int ProductId);
         public ProductVariants GetProductVariantByIdWithInclude(int ProductId);
         IEnumerable<ProductVariant> ProductByCategoryType(string categoryType);
+        public ProductVariants AddProductVarant(ProductVariants productVariant);
 
     }
 }
