@@ -3,37 +3,35 @@ This E-Commerce project is a full-featured online shopping platform built with A
 
 # Features
 Secure user authentication and authorization with JWT.<br>
-Payment processing integration using Stripe.
-Product management with categories including Baby, Women, and Men clothing.
-Supports role-based access for Admin, Brand Owner, and Customer.
-Automapper integration for streamlined object mapping.
-Dependency injection for decoupling and improved testability.
-Uses MSSQL Server with EF Core for database management.
-LINQ for efficient data querying.
+Payment processing integration using Stripe.<br>
+Product management with categories including Baby, Women, and Men clothing.<br>
+Supports role-based access for Admin, Brand Owner, and Customer.<br>
+Automapper integration for streamlined object mapping.<br>
+Dependency injection for decoupling and improved testability.<br>
+Uses MSSQL Server with EF Core for database management.<br>
+LINQ for efficient data querying.<br>
 
 # Technologies Used
-ASP.NET Core Web API
-JWT (JSON Web Tokens) for Authentication
-Automapper for object-to-object mapping
-Dependency Injection (DI)
-Entity Framework Core (EF Core)
-MS SQL Server for data storage
-LINQ for data manipulation
-Stripe API for payment processing
-Onion Architecture for maintaining a clean code structure
+ASP.NET Core Web API <br>
+JWT (JSON Web Tokens) for Authentication <br>
+Automapper for object-to-object mapping <br>
+Dependency Injection (DI)<br>
+Entity Framework Core (EF Core)<br>
+MS SQL Server for data storage<br>
+LINQ for data manipulation<br>
+Stripe API for payment processing<br>
+Onion Architecture for maintaining a clean code structure<br>
 
 # System Roles
-The platform serves the following user roles:
-
-Admin: Manages the overall system, including users and settings.
-Brand Owner: Can manage their own products and view orders related to their brand.
-Customer: Can browse products, add them to their cart, and proceed to checkout and payment.
+The platform serves the following user roles:<br>
+Admin: Manages the overall system, including users and settings.<br>
+Brand Owner: Can manage their own products and view orders related to their brand.<br>
+Customer: Can browse products, add them to their cart, and proceed to checkout and payment.<br>
 
 # Categories
-The product catalog is divided into three categories:
-
-Baby Clothes
-Women Clothes
+The product catalog is divided into three categories:<br>
+Baby Clothes<br>
+Women Clothes<br>
 Men Clothes
 
 
