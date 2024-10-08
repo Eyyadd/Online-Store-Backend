@@ -2,7 +2,7 @@
 This E-Commerce project is a full-featured online shopping platform built with ASP.NET Core and follows the Onion Architecture pattern. The system targets three main roles (Admin, Brand Owner, and Customer) and supports essential functionalities for online retail, including authentication, payment integration, and product management.
 
 # Features
-Secure user authentication and authorization with JWT.
+Secure user authentication and authorization with JWT.<br>
 Payment processing integration using Stripe.
 Product management with categories including Baby, Women, and Men clothing.
 Supports role-based access for Admin, Brand Owner, and Customer.
